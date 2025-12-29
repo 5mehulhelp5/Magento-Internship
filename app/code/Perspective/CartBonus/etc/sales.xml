@@ -2,7 +2,9 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Sales:etc/sales.xsd">
     <section name="quote">
         <group name="totals">
-            <item name="bonus_total" instance="Perspective\CartBonus\Model\Totals\Bonus" sort_order="150"/>
+            <item name="bonus_total"
+                  instance="Perspective\CartBonus\Model\Totals\Bonus"
+                  sort_order="450"/> <!--after discount(cart rules) and shipping   vendor/magento/module-sales-rule/etc/sales.xml-->
         </group>
     </section>
 </config>

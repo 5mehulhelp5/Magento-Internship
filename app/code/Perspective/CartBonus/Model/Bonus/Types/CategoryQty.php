@@ -9,22 +9,22 @@ class CategoryQty extends \Perspective\CartBonus\Model\Bonus\AbstractBonus
 
     public function isApplicable($quote, $total): bool
     {
+        //if cart rules applied
+        if ($this->validationHelper->isCartRulesApplied($quote)) {
+            return false;
+        }
+
+        //if bonus enabled
         if (!$this->isEnabled()){
             return false;
         }
-        $config = $this->getConfig();
 
         //if categories and discount not configured
+        $config = $this->getConfig();
         if ($config['select_categories'] == null &&
             $config['discount_value'] == null &&
             $config['min_qty'] == null
         ) {
-            return false;
-        }
-
-        //if totals summoned without quote
-        $items = $quote->getItems();
-        if (!$items) {
             return false;
         }
 
@@ -89,7 +89,7 @@ class CategoryQty extends \Perspective\CartBonus\Model\Bonus\AbstractBonus
             }
         }
 
-        // вплив на тотали
+        //apply discount to bonus total
         $total->addTotalAmount($this::BONUS_TOTAL_CODE, -$totalDiscount);
         $total->addBaseTotalAmount($this::BONUS_TOTAL_CODE, -$totalDiscount);
 
@@ -99,7 +99,7 @@ class CategoryQty extends \Perspective\CartBonus\Model\Bonus\AbstractBonus
         ];
     }
 
-    public function getCategoryItemsQtyArray(): array
+    private function getCategoryItemsQtyArray(): array
     {
         $minCategoryQty = $this->getConfig()['min_qty'];
 

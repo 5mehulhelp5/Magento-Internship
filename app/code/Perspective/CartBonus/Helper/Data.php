@@ -7,9 +7,10 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
 {
     protected $productRepository;
     protected $categoryRepository;
+
     public function __construct(
         ProductRepositoryInterface $productRepository,
-        CategoryRepository $categoryRepository
+        CategoryRepository $categoryRepository,
     ) {
         $this->productRepository = $productRepository;
         $this->categoryRepository = $categoryRepository;
@@ -29,5 +30,15 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     public function getCategoryNameById($categoryId): string
     {
         return $this->categoryRepository->get($categoryId)->getName();
+    }
+
+    public function getProductById($productId)
+    {
+        return $this->productRepository->getById($productId);
+    }
+
+    public function getProductSkuById($productId)
+    {
+        return $this->productRepository->getById($productId)->getSku();
     }
 }

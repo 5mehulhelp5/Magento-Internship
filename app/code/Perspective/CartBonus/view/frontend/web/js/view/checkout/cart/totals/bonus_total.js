@@ -6,17 +6,6 @@ define(
         'use strict';
 
         return Component.extend({
-
-            /**
-             * @override
-             */
-            isDisplayed: function () {
-                return this.getPureValue() !== 0;
-            },
-
-            /*getMessages: function () {
-                ret
-            }*/
         });
     }
 );

@@ -12,8 +12,7 @@ class Bonus extends AbstractTotal
 
     public function __construct(
         Manager $bonusManager,
-    )
-    {
+    ) {
         $this->bonusManager = $bonusManager;
         $this->setCode('bonus_total');
     }
@@ -36,6 +35,7 @@ class Bonus extends AbstractTotal
         if (!count($items)) {
             return $this;
         }
+        
         $frontendData = $this->bonusManager->test($quote, $total);
         $total->setData('bonus_frontend_data', $frontendData);
 
@@ -73,13 +73,11 @@ class Bonus extends AbstractTotal
                 'bonus_messages' => []
             ];
         }
-
+            // можно потестить через jslayout кастом поле
         return [
             'code' => $this->getCode(),
-            'title' => 'Bonus Total',
+            'title' => __(implode('||', $frontendData['bonus_messages'])), //зробив таким чином передачу на фронт бонус повідомлень бо ніяк не виходило додати в цей масив кастомне поле
             'value' => -$frontendData['bonus_discount'],
-            //'messages' => $frontendData['bonus_messages'],
-            //'extension_attributes' => [$frontendData['bonus_messages']] //проблема с получением\отправкой данных на фронт
         ];
     }
 

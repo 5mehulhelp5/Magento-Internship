@@ -10,13 +10,22 @@ define(
         return Component.extend({
             defaults: {
                 isFullTaxSummaryDisplayed: window.checkoutConfig.isFullTaxSummaryDisplayed || false,
-                template: 'Perspective_CartBonus/checkout/summary/bonus_total'
+                template: 'Perspective_CartBonus/checkout/summary/bonus_total',
+                config: {}
             },
             totals: quote.getTotals(),
             isTaxDisplayedInGrandTotal: window.checkoutConfig.includeTaxInGrandTotal || false,
 
             isDisplayed: function() {
-                return this.isFullMode() && this.getPureValue() !== 0;
+                //return this.isFullMode() && this.getPureValue() !== 0;
+                var messages = '';
+                if (this.totals()) {
+                    messages = totals.getSegment('bonus_total').title;
+                }
+                if (messages !== '') {
+                    return true
+                }
+                return false;
             },
 
             getValue: function() {
@@ -24,7 +33,6 @@ define(
                 if (this.totals()) {
                     price = totals.getSegment('bonus_total').value;
                 }
-                console.log(totals);
                 return this.getFormattedPrice(price);
             },
             getPureValue: function() {
@@ -32,17 +40,16 @@ define(
                 if (this.totals()) {
                     price = totals.getSegment('bonus_total').value;
                 }
-                console.log(totals);
                 return price;
             },
 
-            getMessages: function() {
+            getBonusMessages: function() {
                 var messages = [];
                 if (this.totals()) {
-                    messages = totals.getSegment('bonus_total').messages;
+                    messages = totals.getSegment('bonus_total').title;
                 }
-                return messages;
-            }
+                return messages.split('||');
+            },
         });
     }
 );

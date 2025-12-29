@@ -2,14 +2,18 @@
 namespace Perspective\CartBonus\Helper;
 
 use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\InventorySalesApi\Api\AreProductsSalableInterface;
 class Validation extends \Magento\Framework\App\Helper\AbstractHelper
 {
     protected $scopeConfig;
+    protected $productSalableInterface;
 
     public function __construct(
-        ScopeConfigInterface $scopeConfig
+        ScopeConfigInterface $scopeConfig,
+        AreProductsSalableInterface $productSalableInterface
     ) {
         $this->scopeConfig = $scopeConfig;
+        $this->productSalableInterface = $productSalableInterface;
     }
 
     public function isModuleEnabled(): bool
@@ -19,8 +23,7 @@ class Validation extends \Magento\Framework\App\Helper\AbstractHelper
 
     public function isCartRulesApplied($quote): bool
     {
-        $ids = $quote->getAppliedRuleIds();
-        if (empty($ids)) {
+        if ($quote->getBaseSubtotal() == $quote->getBaseSubtotalWithDiscount()) {
             return false;
         }
         return true;
@@ -31,8 +34,13 @@ class Validation extends \Magento\Framework\App\Helper\AbstractHelper
         return $this->scopeConfig->isSetFlag('cartbonus/' . $bonus_code . '/enabled');
     }
 
-    public function getBonusConfig($bonus_code)
+    public function getBonusConfig($bonus_code) // перенос в дата хелпер
     {
         return $this->scopeConfig->getValue('cartbonus/' . $bonus_code);
+    }
+
+    public function isProductSalable($sku)
+    {
+        return $this->productSalableInterface->execute([$sku], 1);
     }
 }

@@ -24,14 +24,20 @@ class Manager
             'bonus_discount' => 0,
             'bonus_messages' => []
         ];
-        if (!$this->validationHelper->isModuleEnabled() ||
-            $this->validationHelper->isCartRulesApplied($quote)
-        ) {
+
+        // if module !enabled
+        if (!$this->validationHelper->isModuleEnabled()) {
             return $result;
         }
 
+        //if totals summoned without quote
+        $items = $quote->getItems();
+        if (!$items) {
+            return false;
+        }
+
         foreach ($this->bonuses as $bonus) {
-            if ($bonus->isApplicable($quote)) {
+            if ($bonus->isApplicable($quote, $total)) {
                 $bonusResult = $bonus->apply($quote, $total);
                 if (isset($bonusResult['bonus_discount'])) {
                     $result['bonus_discount'] += $bonusResult['bonus_discount'];
@@ -40,6 +46,8 @@ class Manager
                         $bonusResult['bonus_messages']
                     );
                 }
+            } else {
+                $bonus->rollback($quote);
             }
         }
         return $result;

@@ -2,12 +2,8 @@
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <body>
-
-        <referenceContainer name="checkout.cart.totals.container">
-            <block class="Magento\Framework\View\Element\Template"
-                   name="checkout.cart.custom.block"
-                   before="checkout.cart.totals"
-                   template="Perspective_CartBonus::bonus_totals.phtml" />
+        <referenceContainer name="content">
+            <block name="cart.ajax.qty.update"  template="Perspective_CartBonus::ajax_cart.phtml" after="-"/>
         </referenceContainer>
 
         <referenceBlock name="checkout.cart.totals">
@@ -16,11 +12,12 @@
                     <item name="components" xsi:type="array">
                         <item name="block-totals" xsi:type="array">
                             <item name="children" xsi:type="array">
+                                <!-- custom bonus total -->
                                 <item name="bonus_total" xsi:type="array">
                                     <item name="component" xsi:type="string">
                                         Perspective_CartBonus/js/view/checkout/cart/totals/bonus_total
                                     </item>
-                                    <item name="sortOrder" xsi:type="string">20</item>
+                                    <item name="sortOrder" xsi:type="string">100</item>
                                     <item name="config" xsi:type="array">
                                         <item name="template" xsi:type="string">
                                             Perspective_CartBonus/checkout/cart/totals/bonus_total
