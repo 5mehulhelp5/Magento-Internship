@@ -4,9 +4,11 @@ class CategoryQty extends \Perspective\CartBonus\Model\Bonus\AbstractBonus
 {
     public const BONUS_CODE = 'category_qty';
     public const MESSAGE_TEMPLATE = 'Bonus: %d%% discount for %d items from category %s';
-
     protected array $categoryItemsQtyArray = [];
 
+    /**
+     * {@inheritdoc}
+     */
     public function isApplicable($quote, $total): bool
     {
         //if cart rules applied
@@ -53,6 +55,9 @@ class CategoryQty extends \Perspective\CartBonus\Model\Bonus\AbstractBonus
         return false;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function apply($quote, $total): array
     {
         //масив з категоріями в яких є достатня кількість ітемів для бонуса
@@ -99,11 +104,15 @@ class CategoryQty extends \Perspective\CartBonus\Model\Bonus\AbstractBonus
         ];
     }
 
+    /**
+     * return filtered array(масив категорій з достатньою кількістю ітемів)
+     *
+     * @return array
+     */
     private function getCategoryItemsQtyArray(): array
     {
         $minCategoryQty = $this->getConfig()['min_qty'];
 
-        //return filtered array(масив категорій з достатньою кількістю ітемів)
         return array_filter(
             $this->categoryItemsQtyArray,
             fn($qty) => $qty >= $minCategoryQty

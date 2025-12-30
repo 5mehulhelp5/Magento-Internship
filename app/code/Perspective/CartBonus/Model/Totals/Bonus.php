@@ -8,8 +8,14 @@ use Perspective\CartBonus\Model\Bonus\Manager;
 
 class Bonus extends AbstractTotal
 {
+    /**
+     * @var Manager
+     */
     protected $bonusManager;
 
+    /**
+     * @param Manager $bonusManager
+     */
     public function __construct(
         Manager $bonusManager,
     ) {
@@ -35,10 +41,10 @@ class Bonus extends AbstractTotal
         if (!count($items)) {
             return $this;
         }
-        
-        $frontendData = $this->bonusManager->test($quote, $total);
-        $total->setData('bonus_frontend_data', $frontendData);
 
+        $frontendData = $this->bonusManager->applyBonuses($quote, $total);
+
+        $total->setData('bonus_frontend_data', $frontendData);
         return $this;
     }
 
@@ -73,7 +79,7 @@ class Bonus extends AbstractTotal
                 'bonus_messages' => []
             ];
         }
-            // можно потестить через jslayout кастом поле
+
         return [
             'code' => $this->getCode(),
             'title' => __(implode('||', $frontendData['bonus_messages'])), //зробив таким чином передачу на фронт бонус повідомлень бо ніяк не виходило додати в цей масив кастомне поле

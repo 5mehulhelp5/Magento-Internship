@@ -4,6 +4,10 @@ class Shipping extends \Perspective\CartBonus\Model\Bonus\AbstractBonus
 {
     public const BONUS_CODE = "shipping";
     public const MESSAGE_TEMPLATE = 'Bonus: %d%% discount for shipping';
+
+    /**
+     * {@inheritdoc}
+     */
     public function isApplicable($quote, $total): bool
     {
         //if cart rules applied
@@ -35,6 +39,9 @@ class Shipping extends \Perspective\CartBonus\Model\Bonus\AbstractBonus
         return true;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function apply($quote, $total): array
     {
         $config = $this->getConfig();

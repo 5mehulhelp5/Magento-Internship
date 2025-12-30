@@ -5,10 +5,13 @@ class Gift extends \Perspective\CartBonus\Model\Bonus\AbstractBonus
     public const BONUS_CODE = 'gift';
     public const MESSAGE_TEMPLATE = 'Bonus: gift - %s';
 
+    /**
+     * {@inheritdoc}
+     */
     public function isApplicable($quote, $total): bool
     {
         //if cart rules appled
-        if ($this->validationHelper->isCartRulesApplied($quote)) {
+        if ($this->validationHelper->isCartRulesApplied($quote)) { //якщо винести до менеджера то не спрацює логіка rollback
             return false;
         }
 
@@ -31,7 +34,6 @@ class Gift extends \Perspective\CartBonus\Model\Bonus\AbstractBonus
             return false;
         }
 
-        //возможно переделать, вместо прокидывания через хелпер напрямую инжект сервиса
         //if gift have qty in stock
         if (!$this->validationHelper->isProductSalable($this->dataHelper->getProductSkuById($giftId))) {
             return false;
@@ -40,6 +42,9 @@ class Gift extends \Perspective\CartBonus\Model\Bonus\AbstractBonus
         return true;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function apply($quote, $total): array
     {
         $config = $this->getConfig();
@@ -56,6 +61,9 @@ class Gift extends \Perspective\CartBonus\Model\Bonus\AbstractBonus
         ];
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function rollback($quote): void
     {
         $this->giftManager->removeGiftFromQuote($quote);

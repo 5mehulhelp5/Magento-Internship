@@ -1,33 +1,61 @@
-define([ //не обновляются тоталы при аджакс обнове
+define([
     'jquery',
-    'Magento_Checkout/js/action/get-totals',
+    'Magento_Checkout/js/model/cart/cache',
+    'Magento_Checkout/js/model/cart/totals-processor/default',
     'Magento_Customer/js/customer-data'
-], function ($, getTotalsAction, customerData) {
+], function ($, cartCache, defaultTotal, customerData) {
 
     $(document).ready(function(){
+
+        //cart ajax
         $(document).on('change', 'input[name$="[qty]"]', function(){
-            var form = $('form#form-validate');
+            let form = $('form#form-validate');
             $.ajax({
                 url: form.attr('action'),
                 data: form.serialize(),
                 showLoader: true,
                 success: function (res) {
-                    var parsedResponse = $.parseHTML(res);
-                    var result = $(parsedResponse).find("#form-validate");
-                    var sections = ['cart'];
-
+                    //cart form reload (item subtotal reload)
+                    let parsedResponse = $.parseHTML(res);
+                    let result = $(parsedResponse).find("#form-validate");
                     $("#form-validate").replaceWith(result);
 
-                    // The mini cart reloading
-                    customerData.reload(sections, true);
+                    // recollect totals
+                    cartCache.set('totals',null);
+                    defaultTotal.estimateTotals();
 
-                    // The totals summary block reloading
-                    var deferred = $.Deferred();
-                    getTotalsAction([], deferred);
                 },
-                error: function (xhr, status, error) {
-                    var err = eval("(" + xhr.responseText + ")");
-                    console.log(err.Message);
+                error: function (xhr) {
+                    console.error('AJAX cart update error:', xhr.responseText);
+                }
+            });
+        });
+
+        //coupon ajax
+        $(document).on('change', '#coupon_code', function(){
+            let form = $('#discount-coupon-form');
+            $.ajax({
+                url: form.attr('action'),
+                type: 'POST',
+                data: form.serialize(),
+                showLoader: true,
+                success: function (res) {
+                    //coupon form reload
+                    let parsedResponse = $.parseHTML(res);
+                    let couponForm = $(parsedResponse).find("#discount-coupon-form");
+                    $("#discount-coupon-form").replaceWith(couponForm);
+
+                    //cart form reload
+                    let cartForm = $(parsedResponse).find("#form-validate");
+                    $("#form-validate").replaceWith(cartForm);
+
+                    // recollect totals
+                    cartCache.set('totals', null);
+                    defaultTotal.estimateTotals();
+
+                },
+                error: function (xhr) {
+                    console.error('AJAX coupon apply error:', xhr.responseText);
                 }
             });
         });

@@ -18,9 +18,7 @@
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
             </group>
-
-
-
+            
             <group id="category_qty" sortOrder="1" translate="label" type="text" showInDefault="1" showInWebsite="1" showInStore="1">
                 <attribute type="expanded">1</attribute>
                 <label>Category Discount</label>
@@ -47,8 +45,6 @@
                     <validate>validate-digits validate-not-negative-number validate-digits-range digits-range-0-100</validate>
                 </field>
             </group>
-
-
 
             <group id="shipping" sortOrder="1" translate="label" type="text" showInDefault="1" showInWebsite="1" showInStore="1">
                 <attribute type="expanded">1</attribute>
@@ -82,8 +78,6 @@
                     <validate>validate-digits validate-not-negative-number validate-digits-range digits-range-0-100</validate>
                 </field>
             </group>
-
-
 
             <group id="gift" sortOrder="1" translate="label" type="text" showInDefault="1" showInWebsite="1" showInStore="1">
                 <attribute type="expanded">1</attribute>

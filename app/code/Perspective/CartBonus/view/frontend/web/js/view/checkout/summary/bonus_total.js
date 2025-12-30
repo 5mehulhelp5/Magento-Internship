@@ -16,27 +16,24 @@ define(
             totals: quote.getTotals(),
             isTaxDisplayedInGrandTotal: window.checkoutConfig.includeTaxInGrandTotal || false,
 
+            //bonus total displayed if title field have messages
             isDisplayed: function() {
-                //return this.isFullMode() && this.getPureValue() !== 0;
-                var messages = '';
+                let messages = '';
                 if (this.totals()) {
                     messages = totals.getSegment('bonus_total').title;
                 }
-                if (messages !== '') {
-                    return true
-                }
-                return false;
+                return messages !== '';
             },
 
             getValue: function() {
-                var price = 0;
+                let price = 0;
                 if (this.totals()) {
                     price = totals.getSegment('bonus_total').value;
                 }
                 return this.getFormattedPrice(price);
             },
             getPureValue: function() {
-                var price = 0;
+                let price = 0;
                 if (this.totals()) {
                     price = totals.getSegment('bonus_total').value;
                 }
@@ -44,7 +41,7 @@ define(
             },
 
             getBonusMessages: function() {
-                var messages = [];
+                let messages = [];
                 if (this.totals()) {
                     messages = totals.getSegment('bonus_total').title;
                 }
