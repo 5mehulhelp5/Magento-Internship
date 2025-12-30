@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <tab id="perspective_tab" translate="label" sortOrder="1">
+            <label>Perspective</label>
+        </tab>
+
+        <section id="weather_widget" sortOrder="111" translate="label" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Weather Widget Config</label>
+            <tab>perspective_tab</tab>
+            <resource>Perspective_WeatherRecommendationWidget::config</resource> <!-- -->
+
+            <group id="general_settings" sortOrder="1" translate="label" type="text" showInDefault="1" showInWebsite="1" showInStore="1">
+                <attribute type="expanded">1</attribute>
+                <label>General Settings</label>
+                <field id="enabled" sortOrder="1" translate="label" type="select" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Module enabled</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+
+                <field id="data_cache_time" sortOrder="1" translate="label" type="text" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>data_cache_time (min)</label>
+                    <validate>validate-digits validate-not-negative-number validate-digits-range</validate>
+                </field>
+            </group>
+
+            <group id="weather_categories" sortOrder="1" translate="label" type="text" showInDefault="1" showInWebsite="1" showInStore="1">
+                <attribute type="expanded">1</attribute>
+                <label>weather_categories</label>
+
+                <field id="category_cold" sortOrder="1" translate="label" type="multiselect" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>category_cold</label>
+                    <source_model>Perspective\WeatherRecommendationWidget\Model\Config\Source\CategoryList</source_model>
+                </field>
+
+                <field id="category_cool" sortOrder="1" translate="label" type="multiselect" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>category_cool</label>
+                    <source_model>Perspective\WeatherRecommendationWidget\Model\Config\Source\CategoryList</source_model>
+                </field>
+
+                <field id="category_warm" sortOrder="1" translate="label" type="multiselect" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>category_warm</label>
+                    <source_model>Perspective\WeatherRecommendationWidget\Model\Config\Source\CategoryList</source_model>
+                </field>
+
+                <field id="category_hot" sortOrder="1" translate="label" type="multiselect" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>category_hot</label>
+                    <source_model>Perspective\WeatherRecommendationWidget\Model\Config\Source\CategoryList</source_model>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>
