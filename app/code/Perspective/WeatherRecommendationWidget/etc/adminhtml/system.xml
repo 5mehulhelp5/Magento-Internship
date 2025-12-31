@@ -20,7 +20,11 @@
 
                 <field id="data_cache_time" sortOrder="1" translate="label" type="text" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>data_cache_time (min)</label>
-                    <validate>validate-digits validate-not-negative-number validate-digits-range</validate>
+                    <validate>validate-digits validate-not-negative-number validate-digits-range digits-range-30-10000</validate>
+                </field>
+
+                <field id="api_key" sortOrder="1" translate="label" type="text" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>api_key (openweathermap)</label>
                 </field>
             </group>
 
@@ -31,21 +35,25 @@
                 <field id="category_cold" sortOrder="1" translate="label" type="multiselect" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>category_cold</label>
                     <source_model>Perspective\WeatherRecommendationWidget\Model\Config\Source\CategoryList</source_model>
+                    <can_be_empty>1</can_be_empty>
                 </field>
 
                 <field id="category_cool" sortOrder="1" translate="label" type="multiselect" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>category_cool</label>
                     <source_model>Perspective\WeatherRecommendationWidget\Model\Config\Source\CategoryList</source_model>
+                    <can_be_empty>1</can_be_empty>
                 </field>
 
                 <field id="category_warm" sortOrder="1" translate="label" type="multiselect" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>category_warm</label>
                     <source_model>Perspective\WeatherRecommendationWidget\Model\Config\Source\CategoryList</source_model>
+                    <can_be_empty>1</can_be_empty>
                 </field>
 
                 <field id="category_hot" sortOrder="1" translate="label" type="multiselect" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>category_hot</label>
                     <source_model>Perspective\WeatherRecommendationWidget\Model\Config\Source\CategoryList</source_model>
+                    <can_be_empty>1</can_be_empty>
                 </field>
             </group>
         </section>

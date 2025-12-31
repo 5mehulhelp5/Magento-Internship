@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Config/etc/config.xsd">
+    <default>
+        <weather_widget>
+            <general_settings>
+                <enabled>0</enabled>
+                <data_cache_time>30</data_cache_time>
+            </general_settings>
+        </weather_widget>
+    </default>
+</config>
