@@ -35,7 +35,7 @@ class Validator
         }
 
         $general = $configData['general_settings'];
-        if ($general['enabled'] !== '1' || empty($general['api_key'])) {
+        if (empty($general['api_key'])) {
             return false;
         }
 
@@ -55,9 +55,9 @@ class Validator
         return true;
     }
 
-    public function hasWeatherData(): bool
+    public function isCookieSet($cookieName): bool
     {
-        if ($this->cookieManager->get()) {
+        if ($this->cookieManager->get($cookieName)) {
             return true;
         }
         return false;

@@ -40,36 +40,10 @@ class Test implements ObserverInterface
 
         if ($fullActionName == 'cms_index_index') {
 
-            $test = $this->getData();
-            $a = 1;
-
-
-            //для теста погодного сервиса надо ждать активацию ключа
-            $apiKey = '1dfbb5a96939f3281f5b9f5194e501c9';
-            $url = "https://api.openweathermap.org/data/2.5/weather?lat={$test['latitude']}&lon={$test['longitude']}&appid={$apiKey}";
-            $this->curl->get($url);
-            $testik = json_decode($this->curl->getBody(), true);
-
-            $temp = $testik['main']['temp'] - 273.15;
-
-
-            $userIp = $this->remoteAddress->getRemoteAddress();
-
             $this->weatherManager->test();
-            $cooTest = $_COOKIE;
-
             $aa = 2;
-
-
 
             return;
         }
-    }
-
-    public function getData($ip = '176.105.211.6')
-    {
-        $url = 'https://ipwho.is/' . $ip . '?fields=city,latitude,longitude';
-        $this->curl->get($url);
-        return json_decode($this->curl->getBody(), true);
     }
 }

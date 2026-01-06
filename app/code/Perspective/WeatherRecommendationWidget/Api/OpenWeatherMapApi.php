@@ -21,6 +21,6 @@ class OpenWeatherMapApi
         $url = "https://api.openweathermap.org/data/2.5/weather?lat={$geoData['latitude']}&lon={$geoData['longitude']}&appid={$apiKey}";
 
         $this->curl->get($url);
-        return json_decode($this->curl->getBody(), true);
+        return json_decode($this->curl->getBody(), true); // не сразу ретурн а проверка на наличие полей, и мб эксепшен
     }
 }

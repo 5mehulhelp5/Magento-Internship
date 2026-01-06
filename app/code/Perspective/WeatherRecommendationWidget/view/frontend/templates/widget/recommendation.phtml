@@ -1,0 +1,26 @@
+<?php
+/** @var \Perspective\WeatherRecommendationWidget\Block\Widget\RecommendationWidget $block */
+
+$data = $block->getRecommendationData();
+
+if (!$block->isVisible()) {
+    return;
+}
+
+$weather = $data['weather_data'];
+?>
+
+<div class="weather-recommendation-widget">
+    <?php if ($weather && isset($weather['city'], $weather['temperature'])): ?>
+        <div class="weather-line">
+            <?= __('In city %1 %2 °C', $weather['city'], $weather['temperature']) ?>
+        </div>
+    <?php endif; ?>
+
+    <div class="product-list">
+        <?php
+            $html = $block->getProductListHtml();
+            echo $html;
+        ?>
+    </div>
+</div>

@@ -4,9 +4,11 @@ use Magento\Store\Model\ScopeInterface;
 
 class Config extends \Magento\Framework\App\Helper\AbstractHelper
 {
+    public const XML_PATH_WEATHER = 'weather_widget';
+
     public function getWeatherConfig()
     {
-        return $this->getConfigValue('weather_widget');
+        return $this->getConfigValue(self::XML_PATH_WEATHER);
     }
     public function getConfigValue($key)
     {
@@ -15,9 +17,13 @@ class Config extends \Magento\Framework\App\Helper\AbstractHelper
 
     public function getWeatherApi()
     {
-        return $this->getConfigValue('weather_widget/general_settings/api_key');
+        return $this->getConfigValue(self::XML_PATH_WEATHER . '/general_settings/api_key');
     }
 
+    public function getCacheTime()
+    {
+        return $this->getConfigValue(self::XML_PATH_WEATHER . '/general_settings/data_cache_time');
+    }
 
 
 
