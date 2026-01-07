@@ -1,0 +1,9 @@
+<?php
+$temperature = $block->getTemperature();
+$city = $block->getCity();
+?>
+
+<div class="weather-recommendation-title"> <h3>
+    In your city <?= $block->escapeHtml($city) ?> the temperature is <?= $block->escapeHtml($temperature) ?>°C.
+    Recommended products:
+</h3></div>

@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<widgets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Widget:etc/widget.xsd">
+
+    <widget id="perspective_weather_recommendation_label_widget"
+            class="Perspective\WeatherRecommendationWidget\Block\Widget\RecommendationWidget">
+        <label>Weather Info Widget</label>
+        <description>Displays current temperature in your city</description>
+        <parameters>
+            <parameter name="template" xsi:type="select" required="true" visible="true">
+                <label>Template</label>
+                <options>
+                    <option name="default" value="Perspective_WeatherRecommendationWidget::widget/weather_info.phtml" selected="true">
+                        <label translate="true">Default Template</label>
+                    </option>
+                </options>
+            </parameter>
+        </parameters>
+    </widget>
+
+    <widget id="perspective_weather_recommendation_list_widget"
+            class="Perspective\WeatherRecommendationWidget\Block\Widget\RecommendationWidget">
+        <label>Recommended Products Widget</label>
+        <description>Displays recommended products based on temperature</description>
+        <parameters>
+            <parameter name="template" xsi:type="select" required="true" visible="true">
+                <label>Template</label>
+                <options>
+                    <option name="default" value="Magento_CatalogWidget::product/widget/content/grid.phtml" selected="true">
+                        <label translate="true">Default Template</label>
+                    </option>
+                </options>
+            </parameter>
+        </parameters>
+    </widget>
+</widgets>

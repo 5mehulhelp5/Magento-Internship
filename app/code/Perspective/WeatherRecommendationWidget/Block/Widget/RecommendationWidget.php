@@ -1,90 +1,132 @@
 <?php
 namespace Perspective\WeatherRecommendationWidget\Block\Widget;
 
-use Magento\Framework\View\Element\Template;
-use Magento\Framework\View\Element\Template\Context;
 use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory as ProductCollectionFactory;
 use Perspective\WeatherRecommendationWidget\Model\Weather\Manager;
+use Magento\CatalogWidget\Block\Product\ProductsList;
+use Magento\Catalog\Model\ResourceModel\Product\Collection;
+use Magento\Catalog\Model\Product\Visibility;
+use Magento\Framework\App\Http\Context as HttpContext;
+use Magento\Rule\Model\Condition\Sql\Builder as SqlBuilder;
+use Magento\CatalogWidget\Model\Rule;
+use Magento\Widget\Helper\Conditions;
 
-class RecommendationWidget extends Template
+class RecommendationWidget extends ProductsList
 {
-   
+    /**
+     * @var ProductCollectionFactory 
+     */
     protected $productCollectionFactory;
-
+    /**
+     * @var Manager 
+     */
     protected $recommendationManager;
 
     protected $recommendationData = null;
 
-    protected $_template = 'Perspective_WeatherRecommendationWidget::widget/recommendation.phtml';
-
+    /**
+     * @param \Magento\Catalog\Block\Product\Context $context
+     * @param ProductCollectionFactory $productCollectionFactory
+     * @param Visibility $catalogProductVisibility
+     * @param HttpContext $httpContext
+     * @param SqlBuilder $sqlBuilder
+     * @param Rule $rule
+     * @param Conditions $conditionsHelper
+     * @param Manager $recommendationManager
+     * @param array $data
+     */
     public function __construct(
-        Context $context,
-        Manager $recommendationManager,
+        \Magento\Catalog\Block\Product\Context $context,
         ProductCollectionFactory $productCollectionFactory,
+        Visibility $catalogProductVisibility,
+        HttpContext $httpContext,
+        SqlBuilder $sqlBuilder,
+        Rule $rule,
+        Conditions $conditionsHelper,
+        Manager $recommendationManager,
         array $data = []
     ) {
         $this->recommendationManager = $recommendationManager;
         $this->productCollectionFactory = $productCollectionFactory;
-        parent::__construct($context, $data);
+
+        parent::__construct(
+            $context,
+            $productCollectionFactory,
+            $catalogProductVisibility,
+            $httpContext,
+            $sqlBuilder,
+            $rule,
+            $conditionsHelper,
+            $data
+        );
     }
 
- 
+    /**
+     * @return array
+     */
     public function getRecommendationData()
     {
         if ($this->recommendationData !== null) {
             return $this->recommendationData;
         }
-
         $this->recommendationData = $this->recommendationManager->test();
-
         return $this->recommendationData;
     }
 
-    
+    /**
+     * @return bool
+     */
     public function isVisible(): bool
     {
         $data = $this->getRecommendationData();
         return !empty($data['recommended_skus']);
     }
 
-
-    public function getProductCollection()
+    /**
+     * Get collection for widget
+     *
+     * @return Collection
+     */
+    public function getBaseCollection(): Collection
     {
         $data = $this->getRecommendationData();
         $skus = $data['recommended_skus'];
-        
+
         $collection = $this->productCollectionFactory->create();
         $collection->addAttributeToSelect('*')
-                   ->addFieldToFilter('sku', ['in' => $skus])
-                   ->setPageSize(count($skus)); //
-
+                    ->addFieldToFilter('sku', ['in' => $skus]);
+        
         return $collection;
-    }
+    } 
 
-
-    public function getProductListHtml()
-    {
-        $collection = $this->getProductCollection();
-
-        $toolbar = $this->getLayout()->createBlock(\Magento\Catalog\Block\Product\ProductList\Toolbar::class)
-            ->setCollection($collection);
-
-        // переделать под вариант и
-        $listBlock = $this->getLayout()->createBlock(\Magento\Catalog\Block\Product\ListProduct::class)
-            ->setCollection($collection)
-            ->setChild('toolbar', $toolbar)
-            ->setTemplate('Magento_Catalog::product/list.phtml');
-
-        $listBlock->setData('viewModel', new \Magento\Catalog\ViewModel\Product\OptionsData());
-
-        return $listBlock->toHtml();
-    }
-
-    protected function _toHtml()//перейти на isVisible а не через это
+    /**
+     * Disable widget if not visible
+     *
+     * @return string
+     */
+    public function toHtml(): string
     {
         if (!$this->isVisible()) {
             return '';
         }
-        return parent::_toHtml();
+
+        return parent::toHtml();
+    }
+
+    /**
+     * @return string
+     */
+    public function getTemperature(): string
+    {
+        $temperature = $this->getRecommendationData()['weather_data']['temperature'];
+        return round($temperature, 1);
+    }
+
+    /**
+     * @return string
+     */
+    public function getCity(): string
+    {
+        return $this->getRecommendationData()['weather_data']['city'];
     }
 }

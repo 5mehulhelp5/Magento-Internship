@@ -6,8 +6,19 @@ use Perspective\WeatherRecommendationWidget\Model\Weather\Recommendation\SelectP
 
 class Manager
 {
+    /**
+     * @var SelectCategories 
+     */
     protected $categorySelector;
+    /**
+     * @var SelectProducts 
+     */
     protected $productSelector;
+
+    /**
+     * @param SelectCategories $categorySelector
+     * @param SelectProducts $productSelector
+     */
     public function __construct ( 
         SelectCategories $categorySelector,
         SelectProducts $productSelector
@@ -16,7 +27,11 @@ class Manager
         $this->productSelector = $productSelector;
     }
 
-    public function getRecommendedSkus($temperature) //rename
+    /**
+     * @param $temperature
+     * @return array
+     */
+    public function getRecommendedSkus($temperature)
     {
         $categoryIds = $this->categorySelector->getScenarioCategories($temperature);
         return $this->productSelector->getRandomSalableSkus($categoryIds);

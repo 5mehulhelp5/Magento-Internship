@@ -2,9 +2,15 @@
       xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <body>
         <referenceContainer name="content">
-            <block class="Perspective\WeatherRecommendationWidget\Block\Widget\RecommendationWidget"
-                   name="weather.recommendation.widget"
-                   template="Perspective_WeatherRecommendationWidget::widget/recommendation.phtml"/>
+            <block  class="Perspective\WeatherRecommendationWidget\Block\Widget\RecommendationWidget"
+                    name="perspective_weather_recommendation_label_widget"
+                    template="Perspective_WeatherRecommendationWidget::widget/weather_info.phtml">
+            </block>
+
+            <block  class="Perspective\WeatherRecommendationWidget\Block\Widget\RecommendationWidget"
+                    name="perspective_weather_recommendation_list_widget"
+                    template="Magento_CatalogWidget::product/widget/content/grid.phtml">
+            </block>
         </referenceContainer>
     </body>
 </page>

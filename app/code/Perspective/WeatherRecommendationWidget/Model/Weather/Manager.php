@@ -28,53 +28,36 @@ class Manager
 
     public function test() //rename
     {
-        // какой-то глобальный трай?
-        $weatherData = [];
-        $recommendedSkus = [];
-        
-
-
-        if (!$this->validator->validate()) {
-            $test = 1;//exc
-        }
-
-        
-        if (!$this->validator->isCookieSet(self::WEATHER_COOKIE_NAME)) {
-            $weatherData = $this->weatherDataCollector->collectWeatherData();
-            $this->cookieManager->set($weatherData, self::WEATHER_COOKIE_NAME);
-        } else {
-            $weatherData = $this->cookieManager->get(self::WEATHER_COOKIE_NAME);
-        }
-
-        //
-        
-        if (!$this->validator->isCookieSet(self::RECOMMENDATIONS_COOKIE_NAME)) {
-            $recommendedSkus = $this->recommender->getRecommendedSkus($weatherData['temperature']);
-            $this->cookieManager->set($recommendedSkus, self::RECOMMENDATIONS_COOKIE_NAME);
-        } else {
-            $recommendedSkus = $this->cookieManager->get(self::RECOMMENDATIONS_COOKIE_NAME);
-        }
-        
-        
         $recommendationData = [
-            'weather_data' => $weatherData,
-            'recommended_skus' => $recommendedSkus
+            'weather_data' => [],
+            'recommended_skus' => []
         ];
-        return $recommendationData;
 
+        try {
+            if (!$this->validator->validate()) {
+                throw new \RuntimeException('Module disabled or not configured');
+            }
 
-
-        // глобальный кетч который при любой проблеме обрубит дальнейшее действие?
-
-
-
+            //get weather data[city, temperature]
+            if (!$this->validator->isCookieSet(self::WEATHER_COOKIE_NAME)) {
+                $weatherData = $this->weatherDataCollector->collectWeatherData();
+                $this->cookieManager->set($weatherData, self::WEATHER_COOKIE_NAME);
+            } else {
+                $weatherData = $this->cookieManager->get(self::WEATHER_COOKIE_NAME);
+            }
             
-
-
-
-        
-
-        //система эксепшенов на разных уровнях для  возврата пустых ску в виджет на этом уровне
-        // получение продукта уже будет в вьюмоделе? виджета
+            //get recommendations[sku]
+            if (!$this->validator->isCookieSet(self::RECOMMENDATIONS_COOKIE_NAME)) {
+                $recommendedSkus = $this->recommender->getRecommendedSkus($weatherData['temperature']);
+                $this->cookieManager->set($recommendedSkus, self::RECOMMENDATIONS_COOKIE_NAME);
+            } else {
+                $recommendedSkus = $this->cookieManager->get(self::RECOMMENDATIONS_COOKIE_NAME);
+            }
+            
+            $recommendationData['weather_data'] = $weatherData;
+            $recommendationData['recommended_skus'] = $recommendedSkus;
+            
+        } catch (\Throwable $e) {}
+        return $recommendationData;
     }
 }
