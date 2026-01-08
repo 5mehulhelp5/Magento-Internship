@@ -55,6 +55,9 @@ class AddValidationsToAddressFields
 
 
 
+        $jsLayout['components']['checkout']['children']['steps']['children']['shipping-step']['children']['shippingAddress']
+            ['children']['shipping-address-fieldset']['children']['lastname']['notice'] = __('Custom Field Comment Test');
+
         return $jsLayout;
     }
 }
