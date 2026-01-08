@@ -5,4 +5,9 @@
                   type="Perspective\CheckoutModifications\Plugin\Checkout\SetFieldPlaceHolders" 
                   sortOrder="10"/>
      </type>
+
+     <type name="Magento\Checkout\Block\Checkout\LayoutProcessor">
+          <plugin name="custom-validation-street-address" 
+                  type="Perspective\CheckoutModifications\Plugin\Checkout\AddValidationsToAddressFields"/>
+     </type>
 </config>
