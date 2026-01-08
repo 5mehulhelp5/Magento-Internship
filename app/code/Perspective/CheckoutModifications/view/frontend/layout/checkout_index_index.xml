@@ -30,6 +30,15 @@
                                                 </item>
                                             </item>
                                         </item>
+
+                                        <!-- new step add -->
+                                        <item name="newstep" xsi:type="array">
+                                     	    <item name="component" xsi:type="string">Perspective_CheckoutModifications/js/view/checkout-new-step</item>
+                                            <item name="sortOrder" xsi:type="string">2</item>
+                                            <item name="children" xsi:type="array">
+                                                <!--add here child component declaration for your step-->
+                                            </item>
+                                 	   </item>
                                     </item>
                                 </item>
 
