@@ -1,0 +1,10 @@
+interface ProductInterface {
+    is_oversized: [OversizedInfo] @resolver(class: "Perspective\\GraphQL\\Model\\Resolver\\IsOversizedResolver") @doc(description: "Determines if the product is oversized.")
+}
+
+type OversizedInfo {
+    store: String
+    overweighted: Boolean
+    current_customer_id: String @doc(description: "The current customer id.")
+    user_type: String @doc(description: "The current customer user type.")
+}
