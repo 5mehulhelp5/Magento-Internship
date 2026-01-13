@@ -7,11 +7,11 @@ use Perspective\WeatherRecommendationWidget\Helper\Data;
 class SelectCategories
 {
     /**
-     * @var Config 
+     * @var Config
      */
     protected $configHelper;
     /**
-     * @var Data 
+     * @var Data
      */
     protected $dataHelper;
 
@@ -19,7 +19,7 @@ class SelectCategories
      * @param Config $configHelper
      * @param Data $dataHelper
      */
-    public function __construct ( 
+    public function __construct (
         Config $configHelper,
         Data $dataHelper
     ) {
@@ -38,7 +38,7 @@ class SelectCategories
     {
         $scenario = $this->getScenarioByTemp($temperature);
         $configValue = $this->configHelper->getWeatherConfig()['weather_categories']['category_' . $scenario];
-        
+
         return $this->dataHelper->stringToArray($configValue);
     }
 
@@ -50,18 +50,11 @@ class SelectCategories
      */
     private function getScenarioByTemp($temperature): string
     {
-        if ($temperature <= 5) {
-            return 'cold';
-        }
-
-        if ($temperature <= 15) {
-            return 'cool';
-        }
-
-        if ($temperature <= 25) {
-            return 'warm';
-        }
-
-        return 'hot';
+        return match(true) {
+            $temperature <= 5 => 'cold',
+            $temperature <= 15 => 'cool',
+            $temperature <= 25 => 'warm',
+            default => 'hot',
+        };
     }
 }

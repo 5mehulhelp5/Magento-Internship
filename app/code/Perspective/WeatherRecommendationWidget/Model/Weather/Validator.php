@@ -6,11 +6,11 @@ use Perspective\WeatherRecommendationWidget\Model\Weather\Cookie\Manager as Cook
 class Validator
 {
     /**
-     * @var Config 
+     * @var Config
      */
     protected $configHelper;
     /**
-     * @var CookieManager 
+     * @var CookieManager
      */
     protected $cookieManager;
 
@@ -48,19 +48,20 @@ class Validator
      */
     public function isModuleConfigured(): bool
     {
+        $result = true;
         $configData = $this->configHelper->getWeatherConfig();
 
         if (!isset($configData['general_settings'])) {
-            return false;
+            $result = false;
         }
 
         $general = $configData['general_settings'];
         if (empty($general['api_key'])) {
-            return false;
+            $result = false;
         }
 
         if (!isset($configData['weather_categories'])) {
-            return false;
+            $result = false;
         }
 
         $categories = $configData['weather_categories'];
@@ -68,18 +69,17 @@ class Validator
 
         foreach ($requiredKeys as $key) {
             if (!isset($categories[$key]) || $categories[$key] == '') {
-                return false;
+                $result = false;
             }
         }
-
-        return true;
+        return $result;
     }
 
     /**
      * @param string $cookieName
      * @return bool
      */
-    public function isCookieSet($cookieName): bool
+    public function isCookieSet(string $cookieName): bool
     {
         if ($this->cookieManager->get($cookieName)) {
             return true;

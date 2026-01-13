@@ -22,10 +22,12 @@ class Config extends \Magento\Framework\App\Helper\AbstractHelper
     /**
      * @return string
      */
-    public function getWeatherApi()
+    public function getWeatherApi()//getWeatherApiKey
     {
         return $this->getConfigValue(self::XML_PATH_WEATHER . '/general_settings/api_key');
     }
+    //getWeatherApiUrl
+    //getGeoApiUrl
 
     /**
      * @return string

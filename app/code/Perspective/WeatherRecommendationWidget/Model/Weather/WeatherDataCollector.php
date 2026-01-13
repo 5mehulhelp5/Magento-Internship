@@ -4,19 +4,20 @@ namespace Perspective\WeatherRecommendationWidget\Model\Weather;
 use Perspective\WeatherRecommendationWidget\Api\IpWhoIsApi;
 use Perspective\WeatherRecommendationWidget\Api\OpenWeatherMapApi;
 use Magento\Framework\HTTP\PhpEnvironment\RemoteAddress;
+use Perspective\WeatherRecommendationWidget\Exception\ApiException;
 
 class WeatherDataCollector
 {
     /**
-     * @var IpWhoIsApi 
+     * @var IpWhoIsApi
      */
     protected $geoApi;
     /**
-     * @var OpenWeatherMapApi 
+     * @var OpenWeatherMapApi
      */
     protected $weatherApi;
     /**
-     * @var RemoteAddress 
+     * @var RemoteAddress
      */
     protected $remoteAddress;
 
@@ -35,22 +36,16 @@ class WeatherDataCollector
         $this->remoteAddress = $remoteAddress;
     }
 
+
     /**
      * @return array
+     * @throws ApiException
      */
-    public function collectWeatherData()
+    public function collectWeatherData(): array
     {
         $ip = $this->getUserIp();
-
         $geoData = $this->geoApi->getGeoData($ip);
-        if (empty($geoData['city'])) {
-            throw new \RuntimeException('Location could not be determined for IP: ' . $ip);
-        }
-
         $weatherData = $this->weatherApi->getWeatherData($geoData);
-        if (!isset($weatherData['main']['temp'])) {
-            throw new \RuntimeException('Weather data not found');
-        }
         $temperature = $weatherData['main']['temp'] - 273.15;
 
         return [
@@ -62,7 +57,7 @@ class WeatherDataCollector
     /**
      * @return string
      */
-    private function getUserIp()
+    private function getUserIp(): string
     {
         //return $this->remoteAddress->getRemoteAddress();
         return '143.106.0.0'; // because local magento

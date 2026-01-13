@@ -10,22 +10,23 @@ use Magento\Framework\App\Http\Context as HttpContext;
 use Magento\Rule\Model\Condition\Sql\Builder as SqlBuilder;
 use Magento\CatalogWidget\Model\Rule;
 use Magento\Widget\Helper\Conditions;
+use Magento\Catalog\Block\Product\Context;
 
 class RecommendationWidget extends ProductsList
 {
     /**
-     * @var ProductCollectionFactory 
+     * @var ProductCollectionFactory
      */
     protected $productCollectionFactory;
     /**
-     * @var Manager 
+     * @var Manager
      */
     protected $recommendationManager;
 
     protected $recommendationData = null;
 
     /**
-     * @param \Magento\Catalog\Block\Product\Context $context
+     * @param Context $context
      * @param ProductCollectionFactory $productCollectionFactory
      * @param Visibility $catalogProductVisibility
      * @param HttpContext $httpContext
@@ -36,7 +37,7 @@ class RecommendationWidget extends ProductsList
      * @param array $data
      */
     public function __construct(
-        \Magento\Catalog\Block\Product\Context $context,
+        Context $context,
         ProductCollectionFactory $productCollectionFactory,
         Visibility $catalogProductVisibility,
         HttpContext $httpContext,
@@ -95,9 +96,9 @@ class RecommendationWidget extends ProductsList
         $collection = $this->productCollectionFactory->create();
         $collection->addAttributeToSelect('*')
                     ->addFieldToFilter('sku', ['in' => $skus]);
-        
+
         return $collection;
-    } 
+    }
 
     /**
      * Disable widget if not visible

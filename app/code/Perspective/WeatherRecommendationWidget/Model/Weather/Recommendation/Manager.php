@@ -7,11 +7,11 @@ use Perspective\WeatherRecommendationWidget\Model\Weather\Recommendation\SelectP
 class Manager
 {
     /**
-     * @var SelectCategories 
+     * @var SelectCategories
      */
     protected $categorySelector;
     /**
-     * @var SelectProducts 
+     * @var SelectProducts
      */
     protected $productSelector;
 
@@ -19,7 +19,7 @@ class Manager
      * @param SelectCategories $categorySelector
      * @param SelectProducts $productSelector
      */
-    public function __construct ( 
+    public function __construct (
         SelectCategories $categorySelector,
         SelectProducts $productSelector
     ) {

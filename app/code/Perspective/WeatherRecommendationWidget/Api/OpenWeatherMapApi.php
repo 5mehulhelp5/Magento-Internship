@@ -2,14 +2,16 @@
 namespace Perspective\WeatherRecommendationWidget\Api;
 use Magento\Framework\HTTP\Client\Curl;
 use Perspective\WeatherRecommendationWidget\Helper\Config;
+use Perspective\WeatherRecommendationWidget\Exception\ApiException;
+
 class OpenWeatherMapApi
 {
     /**
-     * @var Curl 
+     * @var Curl
      */
     protected $curl;
     /**
-     * @var Config 
+     * @var Config
      */
     protected $configHelper;
 
@@ -26,16 +28,21 @@ class OpenWeatherMapApi
     }
 
     /**
-     * @param array $geoData
+     * @param $geoData
      * @return array
+     * @throws ApiException
      */
-    public function getWeatherData($geoData)
+    public function getWeatherData($geoData): array
     {
         $apiKey = $this->configHelper->getWeatherApi();
-
         $url = "https://api.openweathermap.org/data/2.5/weather?lat={$geoData['latitude']}&lon={$geoData['longitude']}&appid={$apiKey}";
-
         $this->curl->get($url);
-        return json_decode($this->curl->getBody(), true);
+
+        $weatherData = json_decode($this->curl->getBody(), true);
+        if (!isset($weatherData['main']['temp'])) {
+            throw new ApiException(__('Weather API. Weather data not found'));
+        }
+
+        return $weatherData;
     }
 }

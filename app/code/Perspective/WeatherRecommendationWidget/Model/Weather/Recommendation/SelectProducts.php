@@ -53,7 +53,7 @@ class SelectProducts
             $results = $this->salableInterface->execute($chunk, $stockId);
 
             foreach ($results as $result) {
-                if ($result->isSalable() == true) {
+                if ($result->isSalable()) {
                     $selected[] = $result->getSku();
 
                     if (count($selected) >= $limit) {
