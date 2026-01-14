@@ -36,7 +36,6 @@ class WeatherDataCollector
         $this->remoteAddress = $remoteAddress;
     }
 
-
     /**
      * @return array
      * @throws ApiException

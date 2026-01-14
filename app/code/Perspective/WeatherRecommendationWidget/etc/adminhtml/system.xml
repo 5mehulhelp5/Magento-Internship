@@ -21,10 +21,21 @@
                 <field id="data_cache_time" sortOrder="1" translate="label" type="text" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Data caching time (min)</label>
                     <validate>validate-digits validate-not-negative-number validate-digits-range digits-range-30-10000</validate>
+                    <comment>Please Set value in Minutes. Minimum value is 30</comment>
                 </field>
 
-                <field id="api_key" sortOrder="1" translate="label" type="text" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>api_key (openweathermap)</label>
+                <field id="weather_api_key" sortOrder="1" translate="label" type="text" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>weather_api_key (openweathermap)</label>
+                </field>
+
+                <field id="weather_api_url" sortOrder="1" translate="label" type="text" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>weather_api_url</label>
+                    <comment>Example: https://api.openweathermap.org/data/2.5/weather (Fields set programmatically)</comment>
+                </field>
+
+                <field id="geo_api_url" sortOrder="1" translate="label" type="text" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>geo_api_url</label>
+                    <comment>Example: https://ipwho.is/ (Fields set programmatically)</comment>
                 </field>
             </group>
 

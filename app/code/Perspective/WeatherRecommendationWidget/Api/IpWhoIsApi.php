@@ -3,6 +3,7 @@ namespace Perspective\WeatherRecommendationWidget\Api;
 
 use Magento\Framework\HTTP\Client\Curl;
 use Perspective\WeatherRecommendationWidget\Exception\ApiException;
+use Perspective\WeatherRecommendationWidget\Service\Weather\GetConfigData as WeatherConfigService;
 class IpWhoIsApi
 {
     /**
@@ -11,14 +12,21 @@ class IpWhoIsApi
     protected $curl;
 
     /**
+     * @var WeatherConfigService
+     */
+    protected $weatherConfigService;
+
+    /**
      * @param Curl $curl
+     * @param WeatherConfigService $weatherConfigService
      */
     public function __construct(
-        Curl $curl
+        Curl $curl,
+        WeatherConfigService $weatherConfigService
     ) {
         $this->curl = $curl;
+        $this->weatherConfigService = $weatherConfigService;
     }
-
 
     /**
      * @param $ip
@@ -27,13 +35,10 @@ class IpWhoIsApi
      */
     public function getGeoData($ip): array
     {
-        $url = 'https://ipwho.is/' . $ip . '?fields=city,latitude,longitude';
+        $apiUrl = $this->weatherConfigService->getGeoApiUrl();
+        $fields = 'city,latitude,longitude';
 
-        //$apiUrl = $this->configHelper->getIpWhoIsBaseUrl(); // из конфига
-        //$fields = $this->configHelper->getIpWhoIsFields(); // из конфига
-        //$url = sprintf('%s%s?fields=%s', $apiUrl, $ip, $fields);
-
-
+        $url = sprintf('%s%s?fields=%s', $apiUrl, $ip, $fields);
         $this->curl->get($url);
 
         $geoData = json_decode($this->curl->getBody(), true);

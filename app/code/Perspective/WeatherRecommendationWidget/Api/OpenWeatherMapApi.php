@@ -1,8 +1,9 @@
 <?php
 namespace Perspective\WeatherRecommendationWidget\Api;
 use Magento\Framework\HTTP\Client\Curl;
-use Perspective\WeatherRecommendationWidget\Helper\Config;
 use Perspective\WeatherRecommendationWidget\Exception\ApiException;
+use Perspective\WeatherRecommendationWidget\Service\Weather\GetConfigData as WeatherConfigService;
+
 
 class OpenWeatherMapApi
 {
@@ -11,20 +12,20 @@ class OpenWeatherMapApi
      */
     protected $curl;
     /**
-     * @var Config
+     * @var WeatherConfigService
      */
-    protected $configHelper;
+    protected $weatherConfigService;
 
     /**
      * @param Curl $curl
-     * @param Config $configHelper
+     * @param WeatherConfigService $weatherConfigService
      */
     public function __construct(
         Curl $curl,
-        Config $configHelper
+        WeatherConfigService $weatherConfigService
     ) {
         $this->curl = $curl;
-        $this->configHelper = $configHelper;
+        $this->weatherConfigService = $weatherConfigService;
     }
 
     /**
@@ -34,8 +35,10 @@ class OpenWeatherMapApi
      */
     public function getWeatherData($geoData): array
     {
-        $apiKey = $this->configHelper->getWeatherApi();
-        $url = "https://api.openweathermap.org/data/2.5/weather?lat={$geoData['latitude']}&lon={$geoData['longitude']}&appid={$apiKey}";
+        $apiKey = $this->weatherConfigService->getWeatherApiKey();
+        $apiUrl = $this->weatherConfigService->getWeatherApiUrl();
+
+        $url = sprintf('%s?lat=%s&lon=%s&appid=%s', $apiUrl, $geoData['latitude'], $geoData['longitude'], $apiKey);
         $this->curl->get($url);
 
         $weatherData = json_decode($this->curl->getBody(), true);

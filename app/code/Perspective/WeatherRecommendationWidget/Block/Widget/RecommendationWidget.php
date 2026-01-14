@@ -65,7 +65,7 @@ class RecommendationWidget extends ProductsList
     /**
      * @return array
      */
-    public function getRecommendationData()
+    public function getRecommendationData(): array
     {
         if ($this->recommendationData !== null) {
             return $this->recommendationData;

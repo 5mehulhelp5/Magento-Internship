@@ -2,7 +2,10 @@
 namespace Perspective\WeatherRecommendationWidget\Model\Config\Source;
 
 use Magento\Catalog\Model\ResourceModel\Category\CollectionFactory;
-class CategoryList implements \Magento\Framework\Option\ArrayInterface
+use Magento\Framework\Data\OptionSourceInterface;
+use Magento\Framework\Exception\LocalizedException;
+
+class CategoryList implements OptionSourceInterface
 {
     /**
      * @var CollectionFactory
@@ -20,6 +23,7 @@ class CategoryList implements \Magento\Framework\Option\ArrayInterface
     /**
      * Return array of categories that contain at least one product
      * @return array
+     * @throws LocalizedException
      */
     public function toOptionArray()
     {

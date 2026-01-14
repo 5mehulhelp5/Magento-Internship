@@ -1,30 +1,20 @@
 <?php
 namespace Perspective\WeatherRecommendationWidget\Model\Weather\Recommendation;
-
-use Perspective\WeatherRecommendationWidget\Helper\Config;
-use Perspective\WeatherRecommendationWidget\Helper\Data;
+use Perspective\WeatherRecommendationWidget\Service\Weather\GetConfigData as WeatherConfigService;
 
 class SelectCategories
 {
     /**
-     * @var Config
+     * @var WeatherConfigService
      */
-    protected $configHelper;
+    protected $weatherConfigService;
     /**
-     * @var Data
+     * @param WeatherConfigService $weatherConfigService
      */
-    protected $dataHelper;
-
-    /**
-     * @param Config $configHelper
-     * @param Data $dataHelper
-     */
-    public function __construct (
-        Config $configHelper,
-        Data $dataHelper
+    public function __construct(
+        WeatherConfigService $weatherConfigService
     ) {
-        $this->configHelper = $configHelper;
-        $this->dataHelper = $dataHelper;
+        $this->weatherConfigService = $weatherConfigService;
     }
 
     /**
@@ -37,9 +27,9 @@ class SelectCategories
     public function getScenarioCategories($temperature): array
     {
         $scenario = $this->getScenarioByTemp($temperature);
-        $configValue = $this->configHelper->getWeatherConfig()['weather_categories']['category_' . $scenario];
+        $configValue = $this->weatherConfigService->getWeatherConfig()['weather_categories']['category_' . $scenario];
 
-        return $this->dataHelper->stringToArray($configValue);
+        return $this->stringToArray($configValue);
     }
 
     /**
@@ -56,5 +46,14 @@ class SelectCategories
             $temperature <= 25 => 'warm',
             default => 'hot',
         };
+    }
+
+    /**
+     * @param $value
+     * @return array
+     */
+    private function stringToArray($value): array
+    {
+        return array_map('intval', explode(',', $value));
     }
 }

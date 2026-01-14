@@ -1,10 +1,13 @@
 <?php
 namespace Perspective\WeatherRecommendationWidget\Model\Weather\Cookie;
 
+use Magento\Framework\Exception\InputException;
 use Magento\Framework\Stdlib\Cookie\CookieMetadataFactory;
+use Magento\Framework\Stdlib\Cookie\CookieSizeLimitReachedException;
+use Magento\Framework\Stdlib\Cookie\FailureToSendException;
 use Magento\Framework\Stdlib\CookieManagerInterface;
 use Magento\Framework\Session\SessionManagerInterface;
-use Perspective\WeatherRecommendationWidget\Helper\Config;
+use Perspective\WeatherRecommendationWidget\Service\Weather\GetConfigData as WeatherConfigService;
 
 class Manager
 {
@@ -23,26 +26,26 @@ class Manager
      */
     protected $sessionManager;
     /**
-     * @var Config
+     * @var WeatherConfigService
      */
-    protected $configHelper;
+    protected $weatherConfigService;
 
     /**
      * @param CookieManagerInterface $cookieManager
      * @param CookieMetadataFactory $cookieMetadataFactory
      * @param SessionManagerInterface $sessionManager
-     * @param Config $configHelper
+     * @param WeatherConfigService $weatherConfigService
      */
     public function __construct(
         CookieManagerInterface $cookieManager,
         CookieMetadataFactory $cookieMetadataFactory,
         SessionManagerInterface $sessionManager,
-        Config $configHelper
+        WeatherConfigService $weatherConfigService
     ) {
         $this->cookieManager = $cookieManager;
         $this->cookieMetadataFactory = $cookieMetadataFactory;
         $this->sessionManager = $sessionManager;
-        $this->configHelper = $configHelper;
+        $this->weatherConfigService = $weatherConfigService;
     }
 
     /**
@@ -51,11 +54,14 @@ class Manager
      * @param array $data
      * @param string $cookieName
      * @return void
+     * @throws InputException
+     * @throws CookieSizeLimitReachedException
+     * @throws FailureToSendException
      */
     public function set(array $data, string $cookieName): void
     {
-        $duration = $this->configHelper->getCacheTime();
-        
+        $duration = $this->weatherConfigService->getCacheTime();
+
         $metadata = $this->cookieMetadataFactory
             ->createPublicCookieMetadata()
             ->setPath($this->sessionManager->getCookiePath())
@@ -67,10 +73,9 @@ class Manager
 
     /**
      * @param string $cookieName
-     *
      * @return array|null
      */
-    public function get($cookieName): ?array
+    public function get(string $cookieName): ?array
     {
         $value = $this->cookieManager->getCookie($cookieName);
         return $value ? json_decode($value, true) : null;

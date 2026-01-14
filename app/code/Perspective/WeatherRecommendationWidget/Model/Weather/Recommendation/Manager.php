@@ -31,7 +31,7 @@ class Manager
      * @param $temperature
      * @return array
      */
-    public function getRecommendedSkus($temperature)
+    public function getRecommendedSkus($temperature): array
     {
         $categoryIds = $this->categorySelector->getScenarioCategories($temperature);
         return $this->productSelector->getRandomSalableSkus($categoryIds);

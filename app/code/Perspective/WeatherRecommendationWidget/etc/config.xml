@@ -6,6 +6,8 @@
             <general_settings>
                 <enabled>0</enabled>
                 <data_cache_time>30</data_cache_time>
+                <geo_api_url>https://ipwho.is/</geo_api_url>
+                <weather_api_url>https://api.openweathermap.org/data/2.5/weather</weather_api_url>
             </general_settings>
         </weather_widget>
     </default>

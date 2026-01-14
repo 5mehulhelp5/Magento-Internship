@@ -33,7 +33,7 @@ class SelectProducts
      * @param array $categoryIds
      * @return array
      */
-    public function getRandomSalableSkus (array $categoryIds)
+    public function getRandomSalableSkus (array $categoryIds): array
     {
         $collection = $this->productCollectionFactory->create();
         //filters(status, visibility, categories)
