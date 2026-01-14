@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <fieldset name="product-details">
+        <!-- Custom Price
+        <field name="custom_price">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="label" xsi:type="string" translate="true">Custom Price</item>
+                    <item name="dataType" xsi:type="string">price</item>
+                    <item name="formElement" xsi:type="string">input</item>
+                    <item name="sortOrder" xsi:type="number">100</item>
+                    <item name="dataScope" xsi:type="string">custom_price</item>
+
+                    <item name="imports" xsi:type="array">
+                        <item name="disabled" xsi:type="string">ns = ${ $.ns }, index = custom_price_allow_modify:value</item>
+                    </item>
+                </item>
+            </argument>
+        </field>
+
+        < Allow Modify
+        <field name="custom_price_allow_modify">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="label" xsi:type="string" translate="true">Allow Modify</item>
+                    <item name="dataType" xsi:type="string">boolean</item>
+                    <item name="formElement" xsi:type="string">checkbox</item>
+                    <item name="prefer" xsi:type="string">toggle</item>
+                    <item name="sortOrder" xsi:type="number">101</item>
+                    <item name="dataScope" xsi:type="string">custom_price_allow_modify</item>
+                </item>
+            </argument>
+        </field>-->
+    </fieldset>
+</form>
