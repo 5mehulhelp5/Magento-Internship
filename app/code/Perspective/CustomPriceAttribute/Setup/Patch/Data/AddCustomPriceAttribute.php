@@ -30,11 +30,11 @@ class AddCustomPriceAttribute implements DataPatchInterface
         $this->moduleDataSetup->getConnection()->startSetup();
         $eavSetup = $this->eavSetupFactory->create(['setup' => $this->moduleDataSetup]);
 
-        // Атрибут custom_price
         $eavSetup->addAttribute(
             Product::ENTITY,
             'custom_price',
             [
+                'group' => 'Attributes',
                 'type' => 'decimal',
                 'backend' => CustomPrice::class,
                 'frontend' => '',
@@ -45,26 +45,11 @@ class AddCustomPriceAttribute implements DataPatchInterface
                 'global' => ScopedAttributeInterface::SCOPE_WEBSITE,
                 'visible' => true,
                 'used_in_product_listing' => true,
+
+                'is_filterable' => true,
+                'is_filterable_in_search' => true,
             ]
         );
-
-        // Атрибут custom_price_allow_modify
-        $eavSetup->addAttribute(
-            Product::ENTITY,
-            'custom_price_allow_modify',
-            [
-                'type' => 'int',
-                'label' => 'Allow Modify Custom Price',
-                'input' => 'boolean',
-                'required' => false,
-                'user_defined' => true,
-                'global' => ScopedAttributeInterface::SCOPE_GLOBAL,
-                'default' => 0,
-                'visible' => true,
-                'used_in_product_listing' => true,
-            ]
-        );
-
         $this->moduleDataSetup->getConnection()->endSetup();
     }
 

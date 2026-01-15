@@ -3,14 +3,35 @@ namespace Perspective\CustomPriceAttribute\Ui\DataProvider\Product\Modifier;
 
 use Magento\Catalog\Ui\DataProvider\Product\Form\Modifier\AbstractModifier;
 use Magento\Framework\Stdlib\ArrayManager;
+use Magento\Ui\Component\Form\Field;
+use Magento\Catalog\Model\Locator\LocatorInterface;
+use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Ui\Component\Form;
+use Perspective\CustomPriceAttribute\Service\DefaultCustomPrice as DefaultCustomPriceService;
 
 class CustomPrice extends AbstractModifier
 {
-    private ArrayManager $arrayManager;
+    const FIELD_CUSTOM_PRICE = 'custom_price';
+    const FIELD_USE_CONFIG = 'use_config_custom_price';
+    const DATA_SCOPE_PRODUCT = 'data.product';
+    const CONTAINER_PREFIX = 'container_';
 
-    public function __construct(ArrayManager $arrayManager)
-    {
+
+    protected ArrayManager $arrayManager;
+    protected LocatorInterface $locator;
+    protected ScopeConfigInterface $scopeConfig;
+    protected $defaultCustomPriceService;
+
+    public function __construct(
+        LocatorInterface $locator,
+        ArrayManager $arrayManager,
+        ScopeConfigInterface $scopeConfig,
+        DefaultCustomPriceService $defaultCustomPriceService
+    ) {
+        $this->locator = $locator;
         $this->arrayManager = $arrayManager;
+        $this->scopeConfig = $scopeConfig;
+        $this->defaultCustomPriceService = $defaultCustomPriceService;
     }
 
     public function modifyData(array $data): array
@@ -20,8 +41,77 @@ class CustomPrice extends AbstractModifier
 
     public function modifyMeta(array $meta): array
     {
+        return $this->customizeFieldSub($meta);
+    }
 
+    protected function customizeFieldSub(array $meta): array
+    {
+        $pricePath = $this->arrayManager->findPath(self::FIELD_CUSTOM_PRICE, $meta, null, 'children');
+        if (!$pricePath) {
+            return $meta;
+        }
+
+        $containerPath = $this->arrayManager->findPath(self::CONTAINER_PREFIX . self::FIELD_CUSTOM_PRICE, $meta, null, 'children');
+
+        $meta = $this->arrayManager->merge(
+            $pricePath . '/arguments/data/config',
+            $meta,
+            [
+                'imports' => [
+                    'disabled' => '!${$.provider}:' . self::DATA_SCOPE_PRODUCT . '.' . self::FIELD_USE_CONFIG . ':value',
+                    '__disableTmpl' => ['disabled' => false],
+                ],
+                'additionalClasses' => 'admin__field-small',
+                'validation' => [
+                    'validate-zero-or-greater' => true
+                ],
+            ]
+        );
+
+        if ($containerPath) {
+            $meta = $this->arrayManager->merge(
+                $containerPath . '/arguments/data/config',
+                $meta,
+                [
+                    'component' => 'Magento_Ui/js/form/components/group',
+                    'label' => false,
+                    'required' => false,
+                ]
+            );
+        }
+
+        if ($containerPath) {
+            $product = $this->locator->getProduct();
+
+            $meta = $this->arrayManager->set(
+                $containerPath . '/children/' . self::FIELD_USE_CONFIG . '/arguments/data/config',
+                $meta,
+                [
+                    'dataType' => 'boolean',
+                    'formElement' => Form\Element\Select::NAME,
+                    'componentType' => Field::NAME,
+                    //'component' => 'Magento_Ui/js/form/element/single-checkbox',
+                    //'prefer' => 'checkbox',
+
+                    'dataScope' => 'use_config_custom_price',
+
+                    'options' => [ ['label' => __('Allow'), 'value' => 1], ['label' => __('Not Allow'), 'value' => 0], ],
+
+                    'valueMap' => [
+                        'true' => '1',
+                        'false' => '0',
+                    ],
+                    'label' => __('Allow Modify'),
+                    'description' => __('Allow Modify'),
+                    'sortOrder' => 10,
+                    //
+                    'value' => (int)!$this->defaultCustomPriceService->isDefaultCustomPrice($product, $product->getData('custom_price')),
+                ]
+            );
+        }
 
         return $meta;
     }
 }
+//вывод на фронт
+//фильтры
