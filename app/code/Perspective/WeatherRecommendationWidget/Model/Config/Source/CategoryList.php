@@ -25,7 +25,7 @@ class CategoryList implements OptionSourceInterface
      * @return array
      * @throws LocalizedException
      */
-    public function toOptionArray()
+    public function toOptionArray(): array
     {
         $collection = $this->categoryCollectionFactory->create()
             ->addAttributeToSelect('name')

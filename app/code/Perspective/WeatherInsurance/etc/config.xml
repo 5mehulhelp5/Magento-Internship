@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Config/etc/config.xsd">
+    <default>
+        <weather_insurance>
+            <general_settings>
+                <enabled>0</enabled>
+                <insurance_price>1</insurance_price>
+                <scenario_list></scenario_list>
+            </general_settings>
+        </weather_insurance>
+    </default>
+</config>

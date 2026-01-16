@@ -38,7 +38,7 @@ class SelectCategories
      * @param $temperature
      * @return string
      */
-    private function getScenarioByTemp($temperature): string
+    public function getScenarioByTemp($temperature): string // тип поменять на паблик
     {
         return match(true) {
             $temperature <= 5 => 'cold',
@@ -52,7 +52,7 @@ class SelectCategories
      * @param $value
      * @return array
      */
-    private function stringToArray($value): array
+    public function stringToArray($value): array
     {
         return array_map('intval', explode(',', $value));
     }

@@ -58,6 +58,25 @@ class GetConfigData
     }
 
     /**
+     * @return array
+     */
+    public function getScenarioList(): array
+    {
+        $configData = $this->getWeatherConfig()['weather_categories'] ?? [];
+        $options = [];
+
+        foreach (array_keys($configData) as $key) {
+            $value = preg_replace('/^category_/', '', $key);
+            $options[] = [
+                'value' => $value,
+                'label' => ucfirst($value)
+            ];
+        }
+
+        return $options;
+    }
+
+    /**
      * @return bool
      */
     public function isModuleEnabled(): bool

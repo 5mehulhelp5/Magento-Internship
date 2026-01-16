@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <tab id="perspective_tab" translate="label" sortOrder="1">
+            <label>Perspective</label>
+        </tab>
+
+        <section id="weather_insurance" sortOrder="111" translate="label" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Weather Insurance Config</label>
+            <tab>perspective_tab</tab>
+            <resource>Perspective_WeatherInsurance::config</resource> <!-- -->
+
+            <group id="general_settings" sortOrder="1" translate="label" type="text" showInDefault="1" showInWebsite="1" showInStore="1">
+                <attribute type="expanded">1</attribute>
+                <label>General Settings</label>
+                <field id="enabled" sortOrder="1" translate="label" type="select" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Module enabled</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+
+                <field id="insurance_price" sortOrder="2" translate="label" type="text" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Insurance Price</label>
+                    <validate>validate-digits validate-not-negative-number validate-digits-range</validate>
+                    <comment>Set the price for insurance. Must be greater than 0.</comment>
+                    <depends><field id="enabled">1</field></depends>
+                </field>
+
+                <field id="scenario_list" sortOrder="3" translate="label" type="multiselect" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Scenario List</label>
+                    <source_model>Perspective\WeatherRecommendationWidget\Model\Config\Source\ScenarioList</source_model>
+                    <can_be_empty>1</can_be_empty>
+                    <comment>Select which weather scenarios are available for insurance. Multiple options can be selected.</comment>
+                    <depends><field id="enabled">1</field></depends>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>
