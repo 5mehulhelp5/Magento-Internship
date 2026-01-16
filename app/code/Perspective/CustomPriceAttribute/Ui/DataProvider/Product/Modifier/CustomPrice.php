@@ -16,12 +16,29 @@ class CustomPrice extends AbstractModifier
     const DATA_SCOPE_PRODUCT = 'data.product';
     const CONTAINER_PREFIX = 'container_';
 
-
-    protected ArrayManager $arrayManager;
-    protected LocatorInterface $locator;
-    protected ScopeConfigInterface $scopeConfig;
+    /**
+     * @var ArrayManager
+     */
+    protected $arrayManager;
+    /**
+     * @var LocatorInterface
+     */
+    protected $locator;
+    /**
+     * @var ScopeConfigInterface
+     */
+    protected $scopeConfig;
+    /**
+     * @var DefaultCustomPriceService
+     */
     protected $defaultCustomPriceService;
 
+    /**
+     * @param LocatorInterface $locator
+     * @param ArrayManager $arrayManager
+     * @param ScopeConfigInterface $scopeConfig
+     * @param DefaultCustomPriceService $defaultCustomPriceService
+     */
     public function __construct(
         LocatorInterface $locator,
         ArrayManager $arrayManager,
@@ -34,25 +51,42 @@ class CustomPrice extends AbstractModifier
         $this->defaultCustomPriceService = $defaultCustomPriceService;
     }
 
+    /**
+     * @param array $data
+     * @return array
+     */
     public function modifyData(array $data): array
     {
         return $data;
     }
 
+    /**
+     * @param array $meta
+     * @return array
+     */
     public function modifyMeta(array $meta): array
     {
-        return $this->customizeFieldSub($meta);
+        return $this->customizeCustomPriceFields($meta);
     }
 
-    protected function customizeFieldSub(array $meta): array
+    /**
+     * Configure custom price field and its controlling "Use Config" select.
+     *
+     * @param array $meta
+     * @return array
+     */
+    protected function customizeCustomPriceFields(array $meta): array
     {
+        // Find the path to the custom price field
         $pricePath = $this->arrayManager->findPath(self::FIELD_CUSTOM_PRICE, $meta, null, 'children');
         if (!$pricePath) {
             return $meta;
         }
 
+        // Find the container for the custom price field
         $containerPath = $this->arrayManager->findPath(self::CONTAINER_PREFIX . self::FIELD_CUSTOM_PRICE, $meta, null, 'children');
 
+        // Add imports(bind select field), styling and validation to custom price field
         $meta = $this->arrayManager->merge(
             $pricePath . '/arguments/data/config',
             $meta,
@@ -69,13 +103,14 @@ class CustomPrice extends AbstractModifier
         );
 
         if ($containerPath) {
+            // Configure the container
             $meta = $this->arrayManager->merge(
                 $containerPath . '/arguments/data/config',
                 $meta,
                 [
                     'component' => 'Magento_Ui/js/form/components/group',
                     'label' => false,
-                    'required' => false,
+                    'required' => false
                 ]
             );
         }
@@ -83,6 +118,7 @@ class CustomPrice extends AbstractModifier
         if ($containerPath) {
             $product = $this->locator->getProduct();
 
+            // Add the "Use Config" select field controlling custom price
             $meta = $this->arrayManager->set(
                 $containerPath . '/children/' . self::FIELD_USE_CONFIG . '/arguments/data/config',
                 $meta,
@@ -95,8 +131,10 @@ class CustomPrice extends AbstractModifier
 
                     'dataScope' => 'use_config_custom_price',
 
-                    'options' => [ ['label' => __('Allow'), 'value' => 1], ['label' => __('Not Allow'), 'value' => 0], ],
-
+                    'options' => [
+                        ['label' => __('Allow Modify'), 'value' => 1],
+                        ['label' => __('Not Allow Modify'), 'value' => 0],
+                    ],
                     'valueMap' => [
                         'true' => '1',
                         'false' => '0',
@@ -104,14 +142,11 @@ class CustomPrice extends AbstractModifier
                     'label' => __('Allow Modify'),
                     'description' => __('Allow Modify'),
                     'sortOrder' => 10,
-                    //
-                    'value' => (int)!$this->defaultCustomPriceService->isDefaultCustomPrice($product, $product->getData('custom_price')),
+                    'value' => (int)!$this->defaultCustomPriceService->isDefaultCustomPrice($product)
                 ]
             );
         }
-
         return $meta;
     }
 }
-//вывод на фронт
-//фильтры
+

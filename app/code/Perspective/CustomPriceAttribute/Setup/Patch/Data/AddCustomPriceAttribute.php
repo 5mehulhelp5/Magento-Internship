@@ -1,5 +1,4 @@
 <?php
-
 namespace Perspective\CustomPriceAttribute\Setup\Patch\Data;
 
 use Magento\Eav\Setup\EavSetupFactory;
@@ -11,9 +10,19 @@ use Perspective\CustomPriceAttribute\Model\Attribute\Backend\CustomPrice;
 
 class AddCustomPriceAttribute implements DataPatchInterface
 {
-    protected ModuleDataSetupInterface $moduleDataSetup;
-    protected EavSetupFactory $eavSetupFactory;
+    /**
+     * @var ModuleDataSetupInterface
+     */
+    protected $moduleDataSetup;
+    /**
+     * @var EavSetupFactory
+     */
+    protected $eavSetupFactory;
 
+    /**
+     * @param ModuleDataSetupInterface $moduleDataSetup
+     * @param EavSetupFactory $eavSetupFactory
+     */
     public function __construct(
         ModuleDataSetupInterface $moduleDataSetup,
         EavSetupFactory $eavSetupFactory
@@ -45,7 +54,6 @@ class AddCustomPriceAttribute implements DataPatchInterface
                 'global' => ScopedAttributeInterface::SCOPE_WEBSITE,
                 'visible' => true,
                 'used_in_product_listing' => true,
-
                 'is_filterable' => true,
                 'is_filterable_in_search' => true,
             ]
@@ -53,16 +61,10 @@ class AddCustomPriceAttribute implements DataPatchInterface
         $this->moduleDataSetup->getConnection()->endSetup();
     }
 
-
-
-
-
-
-
     /**
      * @inheritDoc
      */
-    public static function getDependencies()
+    public static function getDependencies(): array
     {
        return [];
     }
@@ -70,7 +72,7 @@ class AddCustomPriceAttribute implements DataPatchInterface
     /**
      * @inheritDoc
      */
-    public function getAliases()
+    public function getAliases(): array
     {
         return [];
     }

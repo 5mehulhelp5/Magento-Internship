@@ -3,18 +3,16 @@ namespace Perspective\CustomPriceAttribute\Observer;
 
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Event\Observer;
-use Magento\Framework\App\RequestInterface;
 
 class CatalogProductCustomPrice implements ObserverInterface
 {
-    protected RequestInterface $request;
-
-    public function __construct(RequestInterface $request)
-    {
-        $this->request = $request;
-    }
-
-    public function execute(Observer $observer)
+    /**
+     * Replaces the product price in the catalog with the custom_price value
+     *
+     * @param Observer $observer
+     * @return void
+     */
+    public function execute(Observer $observer): void
     {
         $collection = $observer->getEvent()->getData('collection');
         if ($collection) {
@@ -22,7 +20,6 @@ class CatalogProductCustomPrice implements ObserverInterface
                 $customPrice = $product->getData('custom_price');
                 if ($customPrice != 0) {
                     $product->setPrice($customPrice);
-                    $product->setFinalPrice($customPrice);
                 }
             }
         }
