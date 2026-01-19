@@ -46,12 +46,26 @@ class Validator
     /**
      * @return bool
      */
+    public function validate(): bool
+    {
+        return $this->weatherValidator->validate() //if weather widget enabled and configured
+            && $this->isModuleEnabled()
+            && $this->isModuleConfigured()
+            && $this->weatherValidator->isCookieSet(WeatherManager::WEATHER_COOKIE_NAME)
+            && $this->isCurrentScenarioValid();
+    }
+
+    /**
+     * @return bool
+     */
     public function isModuleEnabled(): bool
     {
         return $this->scopeConfig->isSetFlag('weather_insurance/general_settings/enabled');
     }
 
     /**
+     * check if scenarios selected in config
+     *
      * @return bool
      */
     public function isModuleConfigured(): bool
@@ -60,6 +74,8 @@ class Validator
     }
 
     /**
+     * check if current scenario in config scenarios
+     *
      * @return bool
      */
     public function isCurrentScenarioValid(): bool //cache
@@ -72,26 +88,27 @@ class Validator
     }
 
     /**
+     * @param $quote
      * @return bool
      */
-    public function validate(): bool
+    public function isInsuranceCheckboxEnabled($quote): bool
     {
-        return $this->weatherValidator->validate()
-            && $this->isModuleEnabled()
-            && $this->isModuleConfigured()
-            && $this->weatherValidator->isCookieSet(WeatherManager::WEATHER_COOKIE_NAME)
-            && $this->isCurrentScenarioValid();
+        return $quote->getData('delivery_insurance');
     }
 
     /**
      * @return array
      */
-    private function getConfigScenarios(): array //cache
+    private function getConfigScenarios(): array
     {
         return $this->stringToArray($this->scopeConfig->getValue('weather_insurance/general_settings/scenario_list'));
     }
 
-    private function stringToArray($value): array
+    /**
+     * @param string $value
+     * @return array
+     */
+    private function stringToArray(string $value): array
     {
         return array_map('trim', explode(',', $value));
     }

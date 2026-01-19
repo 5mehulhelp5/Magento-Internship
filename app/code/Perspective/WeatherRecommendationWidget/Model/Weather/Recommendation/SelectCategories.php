@@ -38,7 +38,7 @@ class SelectCategories
      * @param $temperature
      * @return string
      */
-    public function getScenarioByTemp($temperature): string // тип поменять на паблик
+    public function getScenarioByTemp($temperature): string
     {
         return match(true) {
             $temperature <= 5 => 'cold',

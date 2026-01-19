@@ -14,11 +14,13 @@
                                                 <item name="payment" xsi:type="array">
                                                     <item name="children" xsi:type="array">
                                                         <item name="afterMethods" xsi:type="array">
+
+                                                            <!-- Insurance checkbox component -->
                                                             <item name="children" xsi:type="array">
                                                                 <item name="delivery_insurance" xsi:type="array">
-                                                                    <item name="component" xsi:type="string">Perspective_WeatherInsurance/js/view/delivery-insurance</item>
+                                                                    <item name="component" xsi:type="string">Perspective_WeatherInsurance/js/view/delivery-insurance-checkbox</item>
                                                                     <item name="config" xsi:type="array">
-                                                                        <item name="template" xsi:type="string">Perspective_WeatherInsurance/delivery-insurance</item>
+                                                                        <item name="template" xsi:type="string">Perspective_WeatherInsurance/delivery-insurance-checkbox</item>
                                                                     </item>
                                                                     <item name="sortOrder" xsi:type="string">0</item>
                                                                     <item name="dataScope" xsi:type="string">delivery_insurance</item>
@@ -32,7 +34,7 @@
                                     </item>
                                 </item>
 
-
+                                <!--Insurance Total (Frontend) -->
                                 <item name="sidebar" xsi:type="array">
                                     <item name="children" xsi:type="array">
                                         <item name="summary" xsi:type="array">
@@ -49,23 +51,10 @@
                                                         </item>
                                                     </item>
                                                 </item>
-                                                <item name="cart_items" xsi:type="array">
-                                                    <item name="children" xsi:type="array">
-                                                        <item name="details" xsi:type="array">
-                                                            <item name="children" xsi:type="array">
-                                                                <item name="subtotal" xsi:type="array">
-                                                                    <item name="component" xsi:type="string">Magento_Tax/js/view/checkout/summary/item/details/subtotal</item>
-                                                                </item>
-                                                            </item>
-                                                        </item>
-                                                    </item>
-                                                </item>
                                             </item>
                                         </item>
                                     </item>
                                 </item>
-
-
                             </item>
                         </item>
                     </item>

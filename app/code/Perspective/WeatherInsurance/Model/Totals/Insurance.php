@@ -1,5 +1,4 @@
 <?php
-
 namespace Perspective\WeatherInsurance\Model\Totals;
 
 use Magento\Quote\Model\Quote\Address\Total\AbstractTotal;
@@ -34,7 +33,7 @@ class Insurance extends AbstractTotal
     ) {
         $this->insuranceValidationService = $insuranceValidationService;
         $this->scopeConfig = $scopeConfig;
-        $this->setCode('bonus_total');
+        $this->setCode(self::INSURANCE_TOTAL_CODE);
     }
 
     /**
@@ -49,37 +48,18 @@ class Insurance extends AbstractTotal
         Total $total
     ): Insurance {
         parent::collect($quote, $shippingAssignment, $total);
-
         $address = $shippingAssignment->getShipping()->getAddress();
         $items = $this->_getAddressItems($address);
         if (!count($items)) {
             return $this;
         }
 
-        //в валидацию значение параметра из таблицы
+        $insurancePrice = $this->getInsurancePrice($quote);
 
-        $insurancePrice = $this->getInsurancePrice();
         $total->addTotalAmount(self::INSURANCE_TOTAL_CODE, $insurancePrice);
         $total->addBaseTotalAmount(self::INSURANCE_TOTAL_CODE, $insurancePrice);
 
         return $this;
-    }
-
-    /**
-     * @param Total $total
-     */
-    protected function clearValues(Total $total): void
-    {
-        $total->setTotalAmount('subtotal', 0);
-        $total->setBaseTotalAmount('subtotal', 0);
-        $total->setTotalAmount('tax', 0);
-        $total->setBaseTotalAmount('tax', 0);
-        $total->setTotalAmount('discount_tax_compensation', 0);
-        $total->setBaseTotalAmount('discount_tax_compensation', 0);
-        $total->setTotalAmount('shipping_discount_tax_compensation', 0);
-        $total->setBaseTotalAmount('shipping_discount_tax_compensation', 0);
-        $total->setSubtotalInclTax(0);
-        $total->setBaseSubtotalInclTax(0);
     }
 
     /**
@@ -92,7 +72,7 @@ class Insurance extends AbstractTotal
         return [
             'code' => $this->getCode(),
             'title' => $this->getLabel(),
-            'value' => $this->getInsurancePrice(),
+            'value' => $this->getInsurancePrice($quote),
         ];
     }
 
@@ -105,12 +85,17 @@ class Insurance extends AbstractTotal
     }
 
     /**
+     * return correct price if conditions valid and checkbox checked
+     *
+     * @param Quote $quote
      * @return string
      */
-    private function getInsurancePrice(): string
+    private function getInsurancePrice(Quote $quote): string
     {
         $price = '0';
-        if ($this->insuranceValidationService->validate()) {
+        if ($this->insuranceValidationService->validate() &&
+            $this->insuranceValidationService->isInsuranceCheckboxEnabled($quote)
+        ) {
             $price = $this->scopeConfig->getValue('weather_insurance/general_settings/insurance_price');
         }
         return $price;

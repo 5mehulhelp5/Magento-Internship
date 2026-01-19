@@ -25,6 +25,18 @@
                     <depends><field id="enabled">1</field></depends>
                 </field>
 
+                <field id="checkbox_label" sortOrder="2" translate="label" type="text" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Insurance Label</label>
+                    <comment>Set the label for insurance checkbox. By default: "Add delivery insurance"</comment>
+                    <depends><field id="enabled">1</field></depends>
+                </field>
+
+                <field id="checkbox_description" sortOrder="2" translate="label" type="text" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Insurance Description</label>
+                    <comment>Set the description for insurance checkbox. By default: "test description"</comment>
+                    <depends><field id="enabled">1</field></depends>
+                </field>
+
                 <field id="scenario_list" sortOrder="3" translate="label" type="multiselect" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Scenario List</label>
                     <source_model>Perspective\WeatherRecommendationWidget\Model\Config\Source\ScenarioList</source_model>

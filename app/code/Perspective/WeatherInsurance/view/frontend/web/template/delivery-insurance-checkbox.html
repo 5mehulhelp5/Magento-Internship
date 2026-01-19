@@ -1,0 +1,14 @@
+<!-- ko if: isVisible -->
+<hr>
+<div class="delivery-insurance">
+    <label>
+        <input type="checkbox" data-bind="checked: isChecked">
+        <span data-bind="text: checkboxLabelText"></span>
+    </label>
+
+    <!-- ko if: isChecked -->
+        <div data-bind="text: checkboxDescriptionText"></div>
+    <!-- /ko -->
+
+</div>
+<!-- /ko -->

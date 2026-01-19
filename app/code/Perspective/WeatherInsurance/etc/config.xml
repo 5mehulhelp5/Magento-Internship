@@ -7,6 +7,8 @@
                 <enabled>0</enabled>
                 <insurance_price>1</insurance_price>
                 <scenario_list></scenario_list>
+                <checkbox_label>Add delivery insurance</checkbox_label>
+                <checkbox_description>test description</checkbox_description>
             </general_settings>
         </weather_insurance>
     </default>

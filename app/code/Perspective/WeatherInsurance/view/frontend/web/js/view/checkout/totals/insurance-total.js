@@ -9,21 +9,17 @@ define(
         "use strict";
         return Component.extend({
             defaults: {
-                isFullTaxSummaryDisplayed: window.checkoutConfig.isFullTaxSummaryDisplayed || false,
                 template: 'Perspective_WeatherInsurance/checkout/totals/insurance-total',
                 config: {}
             },
             totals: quote.getTotals(),
-            isTaxDisplayedInGrandTotal: window.checkoutConfig.includeTaxInGrandTotal || false,
 
             isDisplayed: function() {
                 let price = 0;
                 if (this.totals()) {
                     price = totals.getSegment('perspective_delivery_insurance_total').value;
                 }
-
                 return price > 0;
-
             },
 
             getValue: function() {
@@ -32,14 +28,6 @@ define(
                     price = totals.getSegment('perspective_delivery_insurance_total').value;
                 }
                 return this.getFormattedPrice(price);
-            },
-
-            getPureValue: function() {
-                let price = 0;
-                if (this.totals()) {
-                    price = totals.getSegment('perspective_delivery_insurance_total').value;
-                }
-                return price;
             }
         });
     }
