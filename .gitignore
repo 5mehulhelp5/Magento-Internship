@@ -1,0 +1,21 @@
+# Ignore everything by default
+/*
+
+# Keep only folders/files we want
+!app/
+!app/code/
+!app/design
+!.gitignore
+
+
+# Ignore everything else
+app/.htaccess
+app/autoload.php
+app/bootstrap.php
+app/etc
+
+app/code/WeltPixel/
+app/code/WeSupply/
+app/design/frontend/Pearl
+
+
