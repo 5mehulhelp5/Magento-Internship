@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<widgets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Widget:etc/widget.xsd">
+
+    <widget id="multi_tab_product_widget"
+            class="Perspective\MultiTabProductWidget\Block\Product\Widget\MultiTabProductList">
+        <label translate="true">Tabbed Products Widget</label>
+        <description translate="true">Products List with Tabs</description>
+
+        <parameters>
+            <!-- GENERAL SETTINGS -->
+            <parameter name="title" xsi:type="text" required="false" visible="true">
+                <label translate="true">Widget Title</label>
+            </parameter>
+
+            <parameter name="show_pager" xsi:type="select" visible="true"
+                       source_model="Magento\Config\Model\Config\Source\Yesno">
+                <label translate="true">Display Page Control</label>
+            </parameter>
+
+            <parameter name="products_per_page" xsi:type="text" required="true" visible="true">
+                <label translate="true">Products per Page</label>
+                <depends>
+                    <parameter name="show_pager" value="1" />
+                </depends>
+                <value>5</value>
+            </parameter>
+
+            <parameter name="products_count" xsi:type="text" required="true" visible="true">
+                <label translate="true">Products to Display</label>
+                <value>10</value>
+            </parameter>
+
+            <!-- TAB 1 -->
+            <parameter name="tab1_title" xsi:type="text" required="true" visible="true">
+                <label translate="true">Tab 1 Title</label>
+            </parameter>
+
+
+            <!-- TAB 2 -->
+            <parameter name="tab2_title" xsi:type="text" required="true" visible="true">
+                <label translate="true">Tab 2 Title</label>
+            </parameter>
+
+
+
+            <parameter name="template" xsi:type="select" required="true" visible="true">
+                <label>Template</label>
+                <options>
+                    <option name="default" value="Perspective_MultiTabProductWidget::widget/multi_tab_widget.phtml" selected="true">
+                        <label translate="true">Default Template</label>
+                    </option>
+                </options>
+            </parameter>
+        </parameters>
+    </widget>
+</widgets>
+
+

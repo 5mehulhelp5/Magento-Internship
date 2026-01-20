@@ -1,0 +1,28 @@
+<?php
+use Perspective\MultiTabProductWidget\Block\Product\Widget\MultiTabProductList;
+/** @var MultiTabProductList $block */
+
+?>
+<div class="product data items"
+     data-mage-init='{"mage/tabs": {"openedState": "active", "animate": {"duration": 100}, "active": 1, "disabled": [], "disabledState": "disabled"}}'>
+    <div class="item title" data-role="collapsible"> <!-- убрать анимации-->
+        <a class="switch" data-toggle="trigger" href="#tab-cars">Cars</a>
+    </div>
+    <div id="tab-cars" class="item content" data-role="content">111
+
+    </div>
+
+    <div class="item title" data-role="collapsible">
+        <a class="switch" data-toggle="trigger" href="#tab-movies">Movies</a>
+    </div>
+    <div id="tab-movies" class="item content" data-role="content">222
+
+    </div>
+
+    <div class="item title" data-role="collapsible">
+        <a class="switch" data-toggle="trigger" href="#tab-music">Music</a>
+    </div>
+    <div id="tab-music" class="item content" data-role="content">333
+        <?= $block->getProductListHtml() ?>
+    </div>
+</div>
