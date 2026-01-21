@@ -39,7 +39,7 @@ class DataProvider extends AbstractDataProvider
         $items = $this->collection->getItems();
 
         foreach ($items as $condition) {
-            $this->loadedData[$condition->getConsultationId()] = $condition->getData();
+            $this->loadedData[$condition->getConditionId()] = $condition->getData();
         }
         return $this->loadedData;
     }

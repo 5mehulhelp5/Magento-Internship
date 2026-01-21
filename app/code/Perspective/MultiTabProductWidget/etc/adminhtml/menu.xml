@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add
+            id="Perspective_MultiTabProductWidget::task"
+            title="Task"
+            module="Perspective_MultiTabProductWidget"
+            sortOrder="54"
+            resource="Perspective_MultiTabProductWidget::task"/>
+        <add
+            id="Perspective_MultiTabProductWidget::widget_conditions_grid"
+            title="Widget Conditions Grid"
+            module="Perspective_MultiTabProductWidget"
+            sortOrder="1"
+            resource="Perspective_MultiTabProductWidget::widget_conditions_grid"
+            parent="Perspective_MultiTabProductWidget::task"
+            action="widget_conditions/index/index"/>
+    </menu>
+</config>

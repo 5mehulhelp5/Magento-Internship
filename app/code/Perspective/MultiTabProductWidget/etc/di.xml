@@ -5,5 +5,25 @@
         <arguments>
             <argument name="cache_lifetime" xsi:type="string">0</argument>
         </arguments>
-    </type>
-</config> <!-- delete-->
+    </type> <!-- delete-->
+
+
+
+
+        <!-- For Widget Conditions Grid -->
+        <type name="Perspective\MultiTabProductWidget\Model\ResourceModel\Condition\Grid\Collection">
+            <arguments>
+                <argument name="mainTable" xsi:type="string">perspective_widget_conditions</argument>
+                <argument name="eventPrefix" xsi:type="string">perspective_widget_conditions_grid_collection</argument>
+                <argument name="eventObject" xsi:type="string">perspective_grid_collection</argument>
+                <argument name="resourceModel" xsi:type="string">Perspective\MultiTabProductWidget\Model\ResourceModel\Condition</argument>
+            </arguments>
+        </type>
+        <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
+            <arguments>
+                <argument name="collections" xsi:type="array">
+                    <item name="perspective_widget_conditions_listing_data_source" xsi:type="string">Perspective\MultiTabProductWidget\Model\ResourceModel\Condition\Grid\Collection</item>
+                </argument>
+            </arguments>
+        </type>
+</config>

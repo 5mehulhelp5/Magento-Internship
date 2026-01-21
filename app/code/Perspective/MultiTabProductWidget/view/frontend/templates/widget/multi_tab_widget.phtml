@@ -9,20 +9,20 @@ use Perspective\MultiTabProductWidget\Block\Product\Widget\MultiTabProductList;
         <a class="switch" data-toggle="trigger" href="#tab-cars">Cars</a>
     </div>
     <div id="tab-cars" class="item content" data-role="content">111
-
+        <?= $block->getProductListHtml(1) ?>
     </div>
 
     <div class="item title" data-role="collapsible">
         <a class="switch" data-toggle="trigger" href="#tab-movies">Movies</a>
     </div>
     <div id="tab-movies" class="item content" data-role="content">222
-
+        <?= $block->getProductListHtml(2) ?>
     </div>
 
     <div class="item title" data-role="collapsible">
         <a class="switch" data-toggle="trigger" href="#tab-music">Music</a>
     </div>
     <div id="tab-music" class="item content" data-role="content">333
-        <?= $block->getProductListHtml() ?>
+        <?= $block->getProductListHtml(3) ?>
     </div>
 </div>
