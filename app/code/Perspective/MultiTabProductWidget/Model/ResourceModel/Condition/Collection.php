@@ -1,5 +1,4 @@
 <?php
-
 namespace Perspective\MultiTabProductWidget\Model\ResourceModel\Condition;
 
 use Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection;

@@ -9,14 +9,19 @@ class ConditionList implements OptionSourceInterface
     /**
      * @var CollectionFactory
      */
-    private CollectionFactory $collectionFactory;
+    protected CollectionFactory $collectionFactory;
 
+    /**
+     * @param CollectionFactory $collectionFactory
+     */
     public function __construct(CollectionFactory $collectionFactory)
     {
         $this->collectionFactory = $collectionFactory;
     }
 
-
+    /**
+     * @return array
+     */
     public function toOptionArray(): array
     {
         $collection = $this->collectionFactory->create();

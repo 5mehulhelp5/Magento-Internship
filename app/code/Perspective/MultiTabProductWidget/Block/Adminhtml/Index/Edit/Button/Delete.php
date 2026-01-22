@@ -1,31 +1,16 @@
 <?php
 namespace Perspective\MultiTabProductWidget\Block\Adminhtml\Index\Edit\Button;
 
-use Magento\Backend\Block\Widget\Context;
 use Magento\Framework\View\Element\UiComponent\Control\ButtonProviderInterface;
 
 class Delete extends Generic implements ButtonProviderInterface
 {
     /**
-     * @var Context
-     */
-    protected $context;
-
-    /**
-     * @param Context $context
-     */
-    public function __construct(
-        Context $context
-    ) {
-        $this->context = $context;
-    }
-
-    /**
      * Get button data
      *
      * @return array
      */
-    public function getButtonData()
+    public function getButtonData(): array
     {
         $data = [];
         $condition_id = $this->context->getRequest()->getParam('condition_id');
@@ -46,7 +31,7 @@ class Delete extends Generic implements ButtonProviderInterface
     /**
      * @return string
      */
-    public function getDeleteUrl()
+    public function getDeleteUrl(): string
     {
         $condition_id = $this->context->getRequest()->getParam('condition_id');
         return $this->getUrl('*/*/delete', ['condition_id' => $condition_id]);

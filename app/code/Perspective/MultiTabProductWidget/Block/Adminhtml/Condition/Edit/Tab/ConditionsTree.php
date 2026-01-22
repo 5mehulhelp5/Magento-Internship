@@ -1,22 +1,29 @@
 <?php
 declare(strict_types=1);
-
 namespace Perspective\MultiTabProductWidget\Block\Adminhtml\Condition\Edit\Tab;
 
+use Magento\Backend\Block\Template\Context;
 use Magento\Backend\Block\Widget\Form\Generic;
 use Magento\Backend\Block\Widget\Form\Renderer\Fieldset;
-use Magento\Ui\Component\Layout\Tabs\TabInterface;
-use Magento\Rule\Block\Conditions as RuleConditions;
 use Magento\CatalogRule\Model\RuleFactory;
+use Magento\Framework\Data\Form;
+use Magento\Framework\Data\FormFactory;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Phrase;
+use Magento\Framework\Registry;
+use Magento\Rule\Block\Conditions as RuleConditions;
 use Magento\Rule\Model\Condition\AbstractCondition;
+use Magento\Ui\Component\Layout\Tabs\TabInterface;
 
 /**
- * A safe CatalogRule-like Conditions block which will create/load a rule
- * via factory if registry doesn't contain it (prevents get* on null).
+ * Made to make the catalog conditions tree more universal
+ * Original file: vendor/magento/module-catalog-rule/Block/Adminhtml/Promo/Catalog/Edit/Tab/Conditions.php
+ * (the original catalog rule version is not as universal as the sales rules version)
  *
- * Minimal, intentionally close to core CatalogRule block but with fallback.
+ * Based on:
+ * vendor/magento/module-sales-rule/Block/Adminhtml/Promo/Quote/Edit/Tab/Conditions.php
  */
-class CatalogConditions extends Generic implements TabInterface
+class ConditionsTree extends Generic implements TabInterface
 {
     /**
      * @var Fieldset
@@ -31,79 +38,66 @@ class CatalogConditions extends Generic implements TabInterface
     /**
      * @var RuleFactory
      */
-    private $ruleFactory;
+    protected $ruleFactory;
 
     /**
-     * CatalogConditions constructor.
-     *
-     * @param \Magento\Backend\Block\Template\Context $context
-     * @param \Magento\Framework\Registry $registry
-     * @param \Magento\Framework\Data\FormFactory $formFactory
+     * @param Context $context
+     * @param Registry $registry
+     * @param FormFactory $formFactory
      * @param RuleConditions $conditions
      * @param Fieldset $rendererFieldset
+     * @param RuleFactory $ruleFactory
      * @param array $data
-     * @param RuleFactory|null $ruleFactory
      */
     public function __construct(
-        \Magento\Backend\Block\Template\Context $context,
-        \Magento\Framework\Registry $registry,
-        \Magento\Framework\Data\FormFactory $formFactory,
+        Context $context,
+        Registry $registry,
+        FormFactory $formFactory,
         RuleConditions $conditions,
         Fieldset $rendererFieldset,
-        array $data = [],
-        RuleFactory $ruleFactory = null
+        RuleFactory $ruleFactory,
+        array $data = []
     ) {
         $this->_rendererFieldset = $rendererFieldset;
         $this->_conditions = $conditions;
-        $this->ruleFactory = $ruleFactory ?: \Magento\Framework\App\ObjectManager::getInstance()
-            ->get(RuleFactory::class);
+        $this->ruleFactory = $ruleFactory;
         parent::__construct($context, $registry, $formFactory, $data);
     }
 
     /**
-     * Tab label
-     *
-     * @return \Magento\Framework\Phrase
+     * @return Phrase
      */
-    public function getTabLabel()
+    public function getTabLabel(): Phrase
     {
         return __('Conditions');
     }
 
     /**
-     * Tab title
-     *
-     * @return \Magento\Framework\Phrase
+     * @return Phrase
      */
-    public function getTabTitle()
+    public function getTabTitle(): Phrase
     {
         return __('Conditions');
     }
 
     /**
-     * Show tab?
-     *
      * @return bool
      */
-    public function canShowTab()
+    public function canShowTab(): bool
     {
         return true;
     }
 
     /**
-     * Hidden?
-     *
      * @return bool
      */
-    public function isHidden()
+    public function isHidden(): bool
     {
         return false;
     }
 
     /**
-     * Tab class getter
-     *
-     * @return string|null
+     * @return null
      */
     public function getTabClass()
     {
@@ -111,9 +105,7 @@ class CatalogConditions extends Generic implements TabInterface
     }
 
     /**
-     * Tab url (not used)
-     *
-     * @return string|null
+     * @return null
      */
     public function getTabUrl()
     {
@@ -121,26 +113,23 @@ class CatalogConditions extends Generic implements TabInterface
     }
 
     /**
-     * Ajax loaded?
-     *
      * @return bool
      */
-    public function isAjaxLoaded()
+    public function isAjaxLoaded(): bool
     {
         return false;
     }
 
     /**
-     * Prepare form before render
+     * Prepare form with conditions fieldset
      *
-     * @return $this
+     * @return ConditionsTree
+     * @throws LocalizedException
      */
-    protected function _prepareForm()
+    protected function _prepareForm(): ConditionsTree
     {
-        // Try to get existing catalog rule from registry (core behavior)
         $model = $this->_coreRegistry->registry('current_promo_catalog_rule');
 
-        // If not present, try to create/load via factory (SalesRule-like fallback)
         if (!$model) {
             $id = $this->getRequest()->getParam('id');
             $model = $this->ruleFactory->create();
@@ -156,21 +145,22 @@ class CatalogConditions extends Generic implements TabInterface
     }
 
     /**
-     * Adds 'Conditions' to the form.
+     * Add conditions fieldset to form
      *
-     * @param \Magento\CatalogRule\Api\Data\RuleInterface|\Magento\CatalogRule\Model\Rule $model
+     * @param $model
      * @param string $fieldsetId
      * @param string $formName
-     * @return \Magento\Framework\Data\Form
-     * @throws \Magento\Framework\Exception\LocalizedException
+     * @return Form
+     * @throws LocalizedException
      */
-    protected function addTabToForm($model, $fieldsetId = 'conditions_fieldset', $formName = 'perspective_widget_conditions_form')
-    {
-        /** @var \Magento\Framework\Data\Form $form */
+    protected function addTabToForm(
+        $model,
+        string $fieldsetId = 'conditions_fieldset',
+        string $formName = 'perspective_widget_conditions_form'
+    ): Form {
         $form = $this->_formFactory->create();
         $form->setHtmlIdPrefix('rule_');
 
-        // model is guaranteed to be an object here (factory fallback)
         $conditionsFieldSetId = $model->getConditionsFieldSetId($formName);
         $newChildUrl = $this->getUrl(
             'catalog_rule/promo_catalog/newConditionHtml/form/' . $conditionsFieldSetId,
@@ -187,6 +177,7 @@ class CatalogConditions extends Generic implements TabInterface
             ['legend' => __('Conditions (don\'t add conditions if rule is applied to all products)')]
         )->setRenderer($renderer);
 
+        //conditions tree field
         $fieldset->addField(
             'conditions_display',
             'text',
@@ -201,6 +192,7 @@ class CatalogConditions extends Generic implements TabInterface
             ->setRule($model)
             ->setRenderer($this->_conditions);
 
+        //hidden conditions field for save conditions
         $fieldset->addField(
             'conditions',
             'hidden',
@@ -211,23 +203,18 @@ class CatalogConditions extends Generic implements TabInterface
             ]
         );
 
-
-
-
         $form->setValues($model->getData());
         $this->setConditionFormName($model->getConditions(), $formName, $conditionsFieldSetId);
         return $form;
     }
 
     /**
-     * Set form name and js form object on condition and its children.
-     *
      * @param AbstractCondition $conditions
-     * @param string $formName
-     * @param string $jsFormName
+     * @param $formName
+     * @param $jsFormName
      * @return void
      */
-    private function setConditionFormName(AbstractCondition $conditions, $formName, $jsFormName)
+    private function setConditionFormName(AbstractCondition $conditions, $formName, $jsFormName): void
     {
         $conditions->setFormName($formName);
         $conditions->setJsFormObject($jsFormName);

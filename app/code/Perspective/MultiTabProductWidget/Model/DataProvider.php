@@ -1,5 +1,4 @@
 <?php
-
 namespace Perspective\MultiTabProductWidget\Model;
 
 use Magento\Ui\DataProvider\AbstractDataProvider;
@@ -12,11 +11,18 @@ class DataProvider extends AbstractDataProvider
      */
     protected $loadedData;
 
-    // @codingStandardsIgnoreStart
+    /**
+     * @param string $name
+     * @param string $primaryFieldName
+     * @param string $requestFieldName
+     * @param CollectionFactory $conditionCollectionFactory
+     * @param array $meta
+     * @param array $data
+     */
     public function __construct(
-        $name,
-        $primaryFieldName,
-        $requestFieldName,
+        string $name,
+        string $primaryFieldName,
+        string $requestFieldName,
         CollectionFactory $conditionCollectionFactory,
         array $meta = [],
         array $data = []
@@ -24,18 +30,15 @@ class DataProvider extends AbstractDataProvider
         $this->collection = $conditionCollectionFactory->create();
         parent::__construct($name, $primaryFieldName, $requestFieldName, $meta, $data);
     }
-    // @codingStandardsIgnoreEnd
 
     /**
      * @return array
      */
     public function getData()
     {
-
         if (isset($this->loadedData)) {
             return $this->loadedData;
         }
-
         $items = $this->collection->getItems();
 
         foreach ($items as $condition) {

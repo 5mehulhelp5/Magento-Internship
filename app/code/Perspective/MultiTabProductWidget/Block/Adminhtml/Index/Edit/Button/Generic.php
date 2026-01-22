@@ -3,9 +3,6 @@ namespace Perspective\MultiTabProductWidget\Block\Adminhtml\Index\Edit\Button;
 
 use Magento\Backend\Block\Widget\Context;
 
-/**
- * Class Generic
- */
 class Generic
 {
     /**
@@ -29,7 +26,7 @@ class Generic
      * @param array $params
      * @return string
      */
-    public function getUrl($route = '', $params = [])
+    public function getUrl(string $route = '', array $params = []): string
     {
         return $this->context->getUrlBuilder()->getUrl($route, $params);
     }

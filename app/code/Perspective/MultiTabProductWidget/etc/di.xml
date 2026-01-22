@@ -1,15 +1,6 @@
 <?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
-    <type name="Perspective\MultiTabProductWidget\Block\Product\Widget\MultiTabProductList">
-        <arguments>
-            <argument name="cache_lifetime" xsi:type="string">0</argument>
-        </arguments>
-    </type> <!-- delete-->
-
-
-
-
         <!-- For Widget Conditions Grid -->
         <type name="Perspective\MultiTabProductWidget\Model\ResourceModel\Condition\Grid\Collection">
             <arguments>

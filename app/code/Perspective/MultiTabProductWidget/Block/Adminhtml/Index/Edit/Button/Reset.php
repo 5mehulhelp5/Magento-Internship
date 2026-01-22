@@ -10,7 +10,7 @@ class Reset implements ButtonProviderInterface
      *
      * @return array
      */
-    public function getButtonData()
+    public function getButtonData(): array
     {
         return [
             'label' => __('Reset'),

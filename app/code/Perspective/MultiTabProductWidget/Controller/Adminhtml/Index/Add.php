@@ -1,14 +1,16 @@
 <?php
 namespace Perspective\MultiTabProductWidget\Controller\Adminhtml\Index;
 
+use Magento\Backend\App\Action;
+use Magento\Backend\Model\View\Result\Page;
 use Magento\Framework\Controller\ResultFactory;
 
-class Add extends \Magento\Backend\App\Action
+class Add extends Action
 {
     /**
-     * @return \Magento\Backend\Model\View\Result\Page
+     * @return Page
      */
-    public function execute()
+    public function execute(): Page
     {
         /** @var Page $resultPage */
         $resultPage = $this->resultFactory->create(ResultFactory::TYPE_PAGE);

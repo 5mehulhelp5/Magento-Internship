@@ -1,6 +1,7 @@
 <?php
 namespace Perspective\MultiTabProductWidget\Controller\Adminhtml\Index;
 
+use Exception;
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
 use Magento\Framework\Controller\ResultInterface;
@@ -10,13 +11,20 @@ use Perspective\MultiTabProductWidget\Model\ResourceModel\Condition as Condition
 
 class Delete extends Action
 {
-
+    /**
+     * @var ConditionModel
+     */
     protected $conditionModel;
-
-
+    /**
+     * @var ConditionResourceModel
+     */
     protected $conditionResourceModel;
 
-
+    /**
+     * @param Context $context
+     * @param ConditionModel $conditionModel
+     * @param ConditionResourceModel $conditionResourceModel
+     */
     public function __construct(
         Context $context,
         ConditionModel $conditionModel,
@@ -28,9 +36,9 @@ class Delete extends Action
     }
 
     /**
-     * @return  boolean
+     * @return  bool
      */
-    protected function _isAllowed()
+    protected function _isAllowed(): bool
     {
         return $this->_authorization->isAllowed('Perspective_MultiTabProductWidget::index_delete');
     }
@@ -40,7 +48,7 @@ class Delete extends Action
      *
      * @return ResultInterface
      */
-    public function execute()
+    public function execute(): ResultInterface
     {
         $id = $this->getRequest()->getParam('condition_id');
         /** @var Redirect $resultRedirect */
@@ -53,7 +61,7 @@ class Delete extends Action
 
                 $this->messageManager->addSuccessMessage(__('Record deleted successfully.'));
                 return $resultRedirect->setPath('*/*/');
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $this->messageManager->addErrorMessage($e->getMessage());
                 return $resultRedirect->setPath('*/*/edit', ['id' => $id]);
             }

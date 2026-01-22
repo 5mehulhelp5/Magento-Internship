@@ -1,5 +1,4 @@
 <?php
-
 namespace Perspective\MultiTabProductWidget\Ui\Component\Listing\Column;
 
 use Magento\Framework\UrlInterface;
@@ -9,7 +8,6 @@ use Magento\Ui\Component\Listing\Columns\Column;
 
 class Actions extends Column
 {
-    const URL_EDIT_PATH = 'widget_conditions/index/edit';
     const URL_DELETE_PATH = 'widget_conditions/index/delete';
 
     /**
@@ -35,7 +33,11 @@ class Actions extends Column
         parent::__construct($context, $uiComponentFactory, $components, $data);
     }
 
-    public function prepareDataSource(array $dataSource)
+    /**
+     * @param array $dataSource
+     * @return array
+     */
+    public function prepareDataSource(array $dataSource): array
     {
         if (isset($dataSource['data']['items'])) {
             foreach ($dataSource['data']['items'] as &$item) {

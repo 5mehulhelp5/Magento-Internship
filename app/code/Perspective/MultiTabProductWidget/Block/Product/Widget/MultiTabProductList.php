@@ -1,27 +1,44 @@
 <?php
 namespace Perspective\MultiTabProductWidget\Block\Product\Widget;
 
-use Magento\CatalogWidget\Block\Product\ProductsList;
-use Magento\Rule\Model\Condition\CombineFactory;
+use Magento\Catalog\Block\Product\Context;
+use Magento\Catalog\Model\Product\Visibility;
+use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory;
 use Magento\CatalogRule\Model\Rule as CatalogRule;
-use Magento\Catalog\Model\ResourceModel\Product\Collection;
-
-
+use Magento\CatalogWidget\Block\Product\ProductsList;
+use Magento\CatalogWidget\Model\Rule;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Phrase;
+use Magento\Rule\Model\Condition\Combine;
+use Magento\Rule\Model\Condition\Sql\Builder;
+use Magento\Widget\Helper\Conditions;
 
 class MultiTabProductList extends ProductsList
 {
-    protected $combineFactory;
+    /**
+     * @var CatalogRule
+     */
     protected $catalogRule;
 
+    /**
+     * @param Context $context
+     * @param CollectionFactory $productCollectionFactory
+     * @param Visibility $catalogProductVisibility
+     * @param \Magento\Framework\App\Http\Context $httpContext
+     * @param Builder $sqlBuilder
+     * @param Rule $rule
+     * @param Conditions $conditionsHelper
+     * @param CatalogRule $catalogRule
+     * @param array $data
+     */
     public function __construct(
-        \Magento\Catalog\Block\Product\Context $context,
-        \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory $productCollectionFactory,
-        \Magento\Catalog\Model\Product\Visibility $catalogProductVisibility,
+        Context $context,
+        CollectionFactory $productCollectionFactory,
+        Visibility $catalogProductVisibility,
         \Magento\Framework\App\Http\Context $httpContext,
-        \Magento\Rule\Model\Condition\Sql\Builder $sqlBuilder,
-        \Magento\CatalogWidget\Model\Rule $rule,
-        \Magento\Widget\Helper\Conditions $conditionsHelper,
-        CombineFactory $combineFactory,
+        Builder $sqlBuilder,
+        Rule $rule,
+        Conditions $conditionsHelper,
         CatalogRule $catalogRule,
         array $data = []
     ) {
@@ -35,12 +52,15 @@ class MultiTabProductList extends ProductsList
             $conditionsHelper,
             $data
         );
-        $this->combineFactory = $combineFactory;
         $this->catalogRule = $catalogRule;
     }
 
-
-    protected function getConditions(): \Magento\Rule\Model\Condition\Combine
+    /**
+     * Override parent function to get current widget tab conditions
+     *
+     * @return Combine
+     */
+    protected function getConditions(): Combine
     {
         $tabId = $this->getData('current_tab_id');
 
@@ -51,26 +71,54 @@ class MultiTabProductList extends ProductsList
         return $this->catalogRule->getConditions();
     }
 
-
+    /**
+     * Get HTML for product list of a tab
+     *
+     * @param string $tabId
+     * @return string
+     * @throws LocalizedException
+     */
     public function getProductListHtml(string $tabId): string
     {
-        //сет таб айди
+        // set current tab id
         $this->setData('current_tab_id', $tabId);
 
-        //формирование коллекции
+        // delay collection creation until tab id is set
         $this->setProductCollection($this->createCollection());
 
+        // set template of the original ProductList widget
         $this->setTemplate('Magento_CatalogWidget::product/widget/content/grid.phtml');
         $this->setData('show_pager', 0);
 
         return $this->toHtml();
     }
 
-
-    protected function _beforeToHtml()
+    /**
+     * Override parent function to delay collection creation
+     * and get tab ID first
+     *
+     * @return $this|ProductsList|MultiTabProductList
+     */
+    protected function _beforeToHtml(): MultiTabProductList|ProductsList|static
     {
-        //отложил создание коллекции чтоб сначала мог получить айди таба
         return $this;
+    }
+
+    /**
+     * @param $tabId
+     * @return Phrase
+     */
+    public function getTabTitle($tabId): Phrase
+    {
+        return __($this->getData('tab_title_' . $tabId));
+    }
+
+    /**
+     * @return Phrase
+     */
+    public function getWidgetTitle(): Phrase
+    {
+        return __($this->getData('widget_title'));
     }
 }
 

@@ -75,7 +75,7 @@
                 </item>
             </argument>
             <htmlContent name="html_content">
-                <argument name="block" xsi:type="object">Perspective\MultiTabProductWidget\Block\Adminhtml\Condition\Edit\Tab\CatalogConditions</argument>
+                <argument name="block" xsi:type="object">Perspective\MultiTabProductWidget\Block\Adminhtml\Condition\Edit\Tab\ConditionsTree</argument>
             </htmlContent>
         </container>
     </fieldset>

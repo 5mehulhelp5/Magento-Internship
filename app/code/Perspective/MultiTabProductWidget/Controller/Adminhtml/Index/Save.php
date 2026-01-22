@@ -1,38 +1,55 @@
 <?php
 namespace Perspective\MultiTabProductWidget\Controller\Adminhtml\Index;
 
+use Exception;
 use Magento\Backend\App\Action;
 use Magento\Backend\Model\Session;
+use Magento\Framework\App\ResponseInterface;
+use Magento\Framework\Controller\Result\Redirect;
+use Magento\Framework\Controller\ResultInterface;
+use Magento\Framework\Exception\LocalizedException;
 use Perspective\MultiTabProductWidget\Model\Condition as ConditionModel;
 use Perspective\MultiTabProductWidget\Model\ResourceModel\Condition as ConditionResourceModel;
+use RuntimeException;
 
-class Save extends \Magento\Backend\App\Action
+class Save extends Action
 {
-
+    /**
+     * @var ConditionModel
+     */
     protected $conditionModel;
-
+    /**
+     * @var ConditionResourceModel
+     */
     protected $conditionResourceModel;
-
     /**
      * @var Session
      */
-    protected $adminsession;
+    protected $adminSession;
 
-
+    /**
+     * @param Action\Context $context
+     * @param ConditionModel $conditionModel
+     * @param ConditionResourceModel $conditionResourceModel
+     * @param Session $adminSession
+     */
     public function __construct(
         Action\Context $context,
         ConditionModel $conditionModel,
         ConditionResourceModel $conditionResourceModel,
-        Session $adminsession
+        Session $adminSession
     ) {
         parent::__construct($context);
         $this->conditionModel = $conditionModel;
         $this->conditionResourceModel = $conditionResourceModel;
-        $this->adminsession = $adminsession;
+        $this->adminSession = $adminSession;
     }
 
 
-    public function execute()
+    /**
+     * @return ResultInterface|ResponseInterface|Redirect
+     */
+    public function execute(): ResultInterface|ResponseInterface|Redirect
     {
         $data = $this->getRequest()->getPostValue();
 
@@ -44,9 +61,6 @@ class Save extends \Magento\Backend\App\Action
                 $this->conditionResourceModel->load($this->conditionModel, $condition_id);
             }
 
-
-
-
             $data['conditions'] = json_encode($data['rule']['conditions']);
             unset($data['rule']);
 
@@ -55,7 +69,7 @@ class Save extends \Magento\Backend\App\Action
             try {
                 $this->conditionResourceModel->save($model);
                 $this->messageManager->addSuccessMessage(__('The data has been saved.'));
-                $this->adminsession->setFormData(false);
+                $this->adminSession->setFormData(false);
                 if ($this->getRequest()->getParam('back')) {
                     if ($this->getRequest()->getParam('back') == 'add') {
                         return $resultRedirect->setPath('*/*/add');
@@ -63,17 +77,13 @@ class Save extends \Magento\Backend\App\Action
                 }
 
                 return $resultRedirect->setPath('*/*/');
-            } catch (\Magento\Framework\Exception\LocalizedException $e) {
+            } catch (LocalizedException|RuntimeException $e) {
                 $this->messageManager->addErrorMessage($e->getMessage());
-            } catch (\RuntimeException $e) {
-                $this->messageManager->addErrorMessage($e->getMessage());
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $this->messageManager->addExceptionMessage($e, __('Something went wrong while saving the data.'));
             }
-
             $this->_getSession()->setFormData($data);
         }
-
         return $resultRedirect->setPath('*/*/');
     }
 }

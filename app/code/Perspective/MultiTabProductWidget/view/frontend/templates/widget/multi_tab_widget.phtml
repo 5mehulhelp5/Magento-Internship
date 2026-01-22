@@ -2,27 +2,24 @@
 use Perspective\MultiTabProductWidget\Block\Product\Widget\MultiTabProductList;
 /** @var MultiTabProductList $block */
 
+$tabsCount = 3;
 ?>
+
 <div class="product data items"
-     data-mage-init='{"mage/tabs": {"openedState": "active", "animate": {"duration": 100}, "active": 1, "disabled": [], "disabledState": "disabled"}}'>
-    <div class="item title" data-role="collapsible"> <!-- убрать анимации-->
-        <a class="switch" data-toggle="trigger" href="#tab-cars">Cars</a>
-    </div>
-    <div id="tab-cars" class="item content" data-role="content">111
-        <?= $block->getProductListHtml(1) ?>
-    </div>
+     data-mage-init='{"mage/tabs": {"openedState": "active", "active": 0, "disabled": [], "disabledState": "disabled"}}'>
+    <span style="font-weight:bold; position: relative; left: 45%; top: 10px; font-size: 18px;">
+        <?= $block->escapeHtml($block->getWidgetTitle()) ?>
+    </span>
 
-    <div class="item title" data-role="collapsible">
-        <a class="switch" data-toggle="trigger" href="#tab-movies">Movies</a>
-    </div>
-    <div id="tab-movies" class="item content" data-role="content">222
-        <?= $block->getProductListHtml(2) ?>
-    </div>
+    <?php for ($i = 1; $i <= $tabsCount; $i++): ?>
+        <div class="item title" data-role="collapsible">
+            <a class="switch" data-toggle="trigger" href="#widget_tab_<?= $i ?>">
+                <?= $block->escapeHtml($block->getTabTitle($i)) ?>
+            </a>
+        </div>
+        <div id="widget_tab_<?= $i ?>" class="item content" data-role="content">
+            <?= $block->getProductListHtml($i) ?>
+        </div>
+    <?php endfor; ?>
 
-    <div class="item title" data-role="collapsible">
-        <a class="switch" data-toggle="trigger" href="#tab-music">Music</a>
-    </div>
-    <div id="tab-music" class="item content" data-role="content">333
-        <?= $block->getProductListHtml(3) ?>
-    </div>
 </div>
