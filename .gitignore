@@ -18,4 +18,8 @@ app/code/WeltPixel/
 app/code/WeSupply/
 app/design/frontend/Pearl
 
+# Hide Hyva files
+app/design/frontend/Perspective/HyvaTestChild/web/
+
+
 

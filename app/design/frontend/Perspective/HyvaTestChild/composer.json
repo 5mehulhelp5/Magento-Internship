@@ -1,0 +1,17 @@
+{
+  "name": "perspective/theme-frontend-hyva-test-child",
+  "description": "N/A",
+  "config": {
+    "sort-packages": true
+  },
+  "require": {
+    "magento/framework": "*",
+      "hyva-themes/magento2-default-theme": "*"
+  },
+  "type": "magento2-theme",
+  "autoload": {
+    "files": [
+      "registration.php"
+    ]
+  }
+}
