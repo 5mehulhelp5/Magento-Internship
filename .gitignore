@@ -7,7 +7,6 @@
 !app/design
 !.gitignore
 
-
 # Ignore everything else
 app/.htaccess
 app/autoload.php
@@ -19,7 +18,7 @@ app/code/WeSupply/
 app/design/frontend/Pearl
 
 # Hide Hyva files
-app/design/frontend/Perspective/HyvaTestChild/web/
+app/design/frontend/Perspective/HyvaTestChild/web/*
 
 
 
