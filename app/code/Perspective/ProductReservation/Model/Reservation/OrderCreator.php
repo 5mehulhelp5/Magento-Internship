@@ -10,7 +10,7 @@ use Magento\InventoryApi\Api\SourceRepositoryInterface;
 class OrderCreator
 {
     const PICKUP_SOURCE = 'source_pickup'; //custom source for instore_pickup shipping(also need custom stock)
-    const SHIPPING_METHOD = 'instore_pickup'; //instore pickup потрібно налаштувати в мадженті вручну(кастом source підключений до кастом stock), завантажені геодані
+    const SHIPPING_METHOD = 'flatrate_flatrate'; //instore pickup потрібно налаштувати в мадженті вручну(кастом source підключений до кастом stock), завантажені геодані
     const PAYMENT_METHOD = 'cashondelivery';
     /**
      * @var QuoteFactory
@@ -83,7 +83,7 @@ class OrderCreator
                 'firstname' => 'admin',
                 'lastname' => 'adminovich'
             ]);
-        $shippingAddress->getExtensionAttributes()->setPickupLocationCode(self::PICKUP_SOURCE);
+        //$shippingAddress->getExtensionAttributes()->setPickupLocationCode(self::PICKUP_SOURCE);
 
         $shippingAddress->setCollectShippingRates(true) //qty reservation
                         ->collectShippingRates()
