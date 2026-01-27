@@ -1,0 +1,27 @@
+<?php
+/** @var ViewModelRegistry $viewModels */
+use Hyva\Theme\Model\ViewModelRegistry;
+use Perspective\CatalogCategoryAnalytics\ViewModel\CategoryAnalytics;
+
+/** @var CategoryAnalytics $analyticsViewModel */
+$analyticsViewModel = $viewModels->require(CategoryAnalytics::class);
+?>
+
+<div class="card p-4">
+    <table class="w-full">
+        <thead>
+        <tr>
+            <th class="text-center px-4 py-2 "><?= __('Total Products')?></th>
+            <th class="text-center px-4 py-2 "><?= __('Average Price')?></th>
+            <th class="text-center px-4 py-2"><?= __('In stock')?></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td class="text-center px-4 py-2 "><?= 123 ?></td>
+            <td class="text-center px-4 py-2 "><?= 12345 ?></td>
+            <td class="text-center px-4 py-2"><?= 55 ?></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
