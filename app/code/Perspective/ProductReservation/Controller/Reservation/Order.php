@@ -111,14 +111,14 @@ class Order extends Action
             $this->emailSender->sendAdminReservationEmail($orderData['incrementId'], $orderData['expiredAt']);
 
             //store success msg
-            $this->messageManager->addSuccessMessage(
-                __('Product reserved successfully with order id #' . $orderData['incrementId'])
-            );
+            $successMsg = __('Product reserved successfully with order id #' . $orderData['incrementId']);
+            $this->messageManager->addSuccessMessage($successMsg);
 
             //test
             return $resultJson->setData([
                 'success' => true,
-                'received' => $data
+                'received' => $data,
+                'message' => $successMsg
             ]);
 
         } catch (Throwable $e) {
