@@ -5,22 +5,24 @@ use Perspective\CatalogCategoryAnalytics\ViewModel\CategoryAnalytics;
 
 /** @var CategoryAnalytics $analyticsViewModel */
 $analyticsViewModel = $viewModels->require(CategoryAnalytics::class);
+$data = $analyticsViewModel->getCategoryAnalyticsData();
 ?>
 
 <div class="card p-4">
+    <!-- Component Title -->
     <table class="w-full">
         <thead>
         <tr>
-            <th class="text-center px-4 py-2 "><?= __('Total Products')?></th>
+            <th class="text-center px-4 py-2 "><?= __('Total')?></th>
             <th class="text-center px-4 py-2 "><?= __('Average Price')?></th>
             <th class="text-center px-4 py-2"><?= __('In stock')?></th>
         </tr>
         </thead>
         <tbody>
         <tr>
-            <td class="text-center px-4 py-2 "><?= 123 ?></td>
-            <td class="text-center px-4 py-2 "><?= 12345 ?></td>
-            <td class="text-center px-4 py-2"><?= 55 ?></td>
+            <td class="text-center px-4 py-2 "><?= $data['total_count'] ?></td>
+            <td class="text-center px-4 py-2 "><?= $data['average_price'] ?></td>
+            <td class="text-center px-4 py-2"><?= $data['in_stock_count'] ?></td>
         </tr>
         </tbody>
     </table>
