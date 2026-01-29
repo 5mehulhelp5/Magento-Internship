@@ -1,0 +1,81 @@
+<?php
+/** @var ViewModelRegistry $viewModels */
+use Hyva\Theme\Model\ViewModelRegistry;
+
+/** @var ProductPage $productViewModel */
+use Hyva\Theme\ViewModel\ProductPage;
+$productViewModel = $viewModels->require(ProductPage::class);
+
+$product = $productViewModel->getProduct();
+?>
+
+<div
+    x-data="customerProductInfo(<?= (int)$product->getId() ?>)"
+    x-init="load()"
+>
+    <template x-if="loaded && data.customerIsLoggedIn">
+        <div class="p-4 border rounded">
+            <p x-show="data.hasPurchased">
+                Ви замовляли цей товар раніше
+            </p>
+
+            <p x-show="!data.hasPurchased">
+                Ви ще не замовляли цей товар
+            </p>
+
+            <p x-text="data.customText"></p>
+
+            <p x-show="data.lastPurchaseDate">
+                Останнє замовлення: <span x-text="data.lastPurchaseDate"></span>
+            </p>
+
+            <p x-show="data.hasPurchased">
+                Кількість замовлень: <span x-text="data.ordersCount"></span>
+            </p>
+
+            <p>
+                Група клієнта: <span x-text="data.customerGroup"></span>
+            </p>
+        </div>
+    </template>
+</div>
+
+<script>
+    function customerProductInfo(productId) {
+        return {
+            loaded: false,
+            data: {},
+
+            async load() {
+                const response = await fetch('/graphql', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        query: `
+                        query ($productId: Int!) {
+                          customerProductInfo(productId: $productId) {
+                            customerIsLoggedIn
+                            hasPurchased
+                            lastPurchaseDate
+                            ordersCount
+                            customerGroup
+                            customText
+                          }
+                        }
+                    `,
+                        variables: {
+                            productId: productId
+                        }
+                    })
+                });
+
+                const result = await response.json();
+                this.data = result.data?.customerProductInfo ?? {};
+                this.loaded = true;
+            }
+        }
+    }
+</script>
