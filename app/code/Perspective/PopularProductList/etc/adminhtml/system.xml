@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <tab id="perspective_tab" translate="label" sortOrder="1">
+            <label>Perspective</label>
+        </tab>
+
+        <section id="perspective_popular_products" sortOrder="111" translate="label" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Popular Products Config</label>
+            <tab>perspective_tab</tab>
+            <resource>Perspective_WeatherInsurance::config</resource> <!-- -->
+
+            <group id="general_settings" sortOrder="1" translate="label" type="text" showInDefault="1" showInWebsite="1" showInStore="1">
+                <attribute type="expanded">1</attribute>
+                <label>General Settings</label>
+                <field id="enabled" sortOrder="1" translate="label" type="select" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Module enabled</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+
+                <field id="update_frequency" sortOrder="2" translate="label" type="text" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Update Frequency (hours)</label>
+                    <validate>validate-digits validate-not-negative-number validate-digits-range</validate>
+                    <comment>Time period between list refreshes. Must be greater than 0.</comment>
+                    <depends><field id="enabled">1</field></depends>
+                </field>
+
+                <field id="display_count" sortOrder="2" translate="label" type="text" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Products Count</label>
+                    <validate>validate-digits validate-not-negative-number validate-digits-range</validate>
+                    <comment>Number of products in the block. Must be greater than 0.</comment>
+                    <depends><field id="enabled">1</field></depends>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

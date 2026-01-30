@@ -1,0 +1,11 @@
+<?php
+/** @var ViewModelRegistry $viewModels */
+/** @var PopularProductList $viewModel */
+use Hyva\Theme\Model\ViewModelRegistry;
+use Perspective\PopularProductList\ViewModel\PopularProductList;
+
+$extraInfoViewModel = $viewModels->require(PopularProductList::class);
+
+$test = $extraInfoViewModel->test();
+$test2 = 1;
+?>
