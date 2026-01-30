@@ -1,158 +1,107 @@
 <?php
 namespace Perspective\CustomerProductInfoGraphQl\Model\Resolver;
 
-use Magento\Customer\Api\Data\CustomerInterface;
 use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
-use Magento\Customer\Api\CustomerRepositoryInterface;
-use Magento\Customer\Api\GroupRepositoryInterface;
-use Magento\Sales\Model\ResourceModel\Order\Collection;
-use Magento\Sales\Model\ResourceModel\Order\CollectionFactory;
-use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
-use Magento\ConfigurableProduct\Model\ResourceModel\Product\Type\Configurable;
+use Perspective\CustomerProductInfoGraphQl\Service\CurrentCustomer;
+use Perspective\CustomerProductInfoGraphQl\Service\CustomerProductOrders;
+
 class CustomerProductInfo implements ResolverInterface
 {
-    protected $context = [];
-    protected $productId = null;
-    protected $ordersWithProduct = null;
+    /**
+     * @var CurrentCustomer
+     */
+    protected $currentCustomerService;
+    /**
+     * @var CustomerProductOrders
+     */
+    protected $customerProductOrdersService;
 
-    protected $customerRepository;
-    protected $groupRepository;
-    protected $collectionFactory;
-    protected $timezone;
-    protected $configurableTypeResourceModel;
-
+    /**
+     * @param CurrentCustomer $currentCustomerService
+     * @param CustomerProductOrders $customerProductOrdersService
+     */
     public function __construct(
-        CustomerRepositoryInterface $customerRepository,
-        GroupRepositoryInterface $groupRepository,
-        CollectionFactory $collectionFactory,
-        TimezoneInterface $timezone,
-        Configurable $configurableTypeResourceModel
+        CurrentCustomer $currentCustomerService,
+        CustomerProductOrders $customerProductOrdersService
     ) {
-        $this->customerRepository = $customerRepository;
-        $this->groupRepository = $groupRepository;
-        $this->collectionFactory = $collectionFactory;
-        $this->timezone = $timezone;
-        $this->configurableTypeResourceModel = $configurableTypeResourceModel;
+        $this->currentCustomerService = $currentCustomerService;
+        $this->customerProductOrdersService = $customerProductOrdersService;
     }
 
+    /**
+     * @param Field $field
+     * @param $context
+     * @param ResolveInfo $info
+     * @param array|null $value
+     * @param array|null $args
+     * @return array
+     */
     public function resolve(
         Field $field,
-              $context,
+              $context, // userId and userType
         ResolveInfo $info,
         array $value = null,
-        array $args = null
+        array $args = null // product id
     ): array {
+        return $this->collectData($info, $context, $args);
+    }
 
-        //$args - product id
-        //$context - userId and userType
+    /**
+     * Prepare data for graphql response
+     *
+     * @param ResolveInfo $info
+     * @param $context
+     * @param array $args
+     * @return array
+     */
+    private function collectData(ResolveInfo $info, $context, array $args): array
+    {
+        //set data in services
+        $this->currentCustomerService->setCustomerId($context->getUserId());
+        $this->customerProductOrdersService->setProductId($args['productId']);
 
-        $this->context = $context;
-        $this->productId = $args['productId'];
+        // get field selection map in graphql request
+        $fieldSelection = $info->getFieldSelection();
 
-        if (!$this->isUserLoggedIn()) {
-            return [
-                'customerIsLoggedIn' => false,
-                'hasPurchased' => false,
-                'lastPurchaseDate' => '',
-                'ordersCount' => 0,
-                'customerGroup' => 'Not logged in',
-                'customText' => ''
-            ];
-        }
-
-        return [
-            'customerIsLoggedIn' => true,
-            'hasPurchased' => $this->isCustomerOrderedProduct(),
-            'lastPurchaseDate' => $this->getLastPurchaseDate(),
-            'ordersCount' => $this->getProductOrdersCount(),
-            'customerGroup' => $this->getGroupName(),
-            'customText' => 'customText'
+        // default response data
+        $isCustomerLoggedIn = $this->currentCustomerService->isCustomerLoggedIn();
+        $data = [
+            'customerIsLoggedIn' => $isCustomerLoggedIn,
         ];
-    }
 
-
-
-    public function isUserLoggedIn(): bool
-    {
-        $userId = $this->context->getUserId();
-
-        if (!$userId) {
-            return false;
+        // not logged in data
+        if (!$isCustomerLoggedIn) {
+            return array_merge($data, [
+                'hasPurchased'     => false,
+                'lastPurchaseDate' => '',
+                'ordersCount'      => 0,
+                'customerGroup'    => 'Guest',
+                'customText'       => ''
+            ]);
         }
-        return true;
-    }
 
-    public function getCustomer(): CustomerInterface
-    {
-        $userId = $this->context->getUserId();
-        return $this->customerRepository->getById($userId);
-    }
-
-
-    public function getGroupName(): string //rename
-    {
-        return $this->groupRepository->getById($this->getCustomer()->getGroupId())->getCode();
-    }
-
-    public function getCustomerOrders(): Collection
-    {
-        $collection = $this->collectionFactory->create()
-            ->addFieldToSelect(['entity_id', 'status', 'created_at'])
-            ->addFieldToFilter('customer_id', $this->context->getUserId())
-            ->addFieldToFilter('status', ['neq' => 'canceled'])
-            ->setOrder('created_at', 'DESC');
-        return $collection;
-    }
-
-    public function getCustomerOrdersWithProduct(): array
-    {
-        if ($this->ordersWithProduct === null) {
-            $orders = $this->getCustomerOrders();
-            $ordersWithProduct = [];
-            foreach ($orders as $order) {
-                $items = $order->getItems();
-                foreach ($items as $item) {
-                    $itemProductId = $item->getProductId();
-
-                    $parentItemId = $this->configurableTypeResourceModel->getParentIdsByChild($itemProductId);
-
-                    if ($parentItemId) {
-                        $itemProductId = $parentItemId[0];
-                    }
-                    if ($itemProductId == $this->productId) {
-                        $ordersWithProduct[] = $order;
-                        break;
-                    }
-                }
-            }
-            $this->ordersWithProduct = $ordersWithProduct;
+        // set field in data if selected in graphql request
+        if (!empty($fieldSelection['customText'])) {
+            $data['customText'] = __('customText');
         }
-        return $this->ordersWithProduct;
-    }
 
-    public function getProductOrdersCount(): int
-    {
-        return sizeof($this->getCustomerOrdersWithProduct());
-    }
-
-    public function isCustomerOrderedProduct(): bool
-    {
-        if ($this->getProductOrdersCount() >= 1) {
-            return true;
+        if (!empty($fieldSelection['customerGroup'])) {
+            $data['customerGroup'] = $this->currentCustomerService->getCustomerGroupName();
         }
-        return false;
-    }
 
-    public function getLastPurchaseDate(): string
-    {
-        $orders = $this->getCustomerOrdersWithProduct();
-        if (empty($orders)) {
-            return '';
+        if (!empty($fieldSelection['hasPurchased'])) {
+            $data['hasPurchased'] = $this->customerProductOrdersService->isCustomerOrderedProduct();
         }
-        $latestOrder = reset($orders);
-        return $this->timezone->formatDateTime($latestOrder->getCreatedAt());
 
+        if (!empty($fieldSelection['lastPurchaseDate'])) {
+            $data['lastPurchaseDate'] = $this->customerProductOrdersService->getLastPurchaseDate();
+        }
+
+        if (!empty($fieldSelection['ordersCount'])) {
+            $data['ordersCount'] = $this->customerProductOrdersService->getProductOrdersCount();
+        }
+        return $data;
     }
 }

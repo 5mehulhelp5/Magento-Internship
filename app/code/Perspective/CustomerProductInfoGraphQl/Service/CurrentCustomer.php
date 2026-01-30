@@ -1,53 +1,104 @@
 <?php
-
 namespace Perspective\CustomerProductInfoGraphQl\Service;
 
 use Magento\Customer\Api\Data\CustomerInterface;
 use Magento\Customer\Api\CustomerRepositoryInterface;
 use Magento\Customer\Api\GroupRepositoryInterface;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Exception\NoSuchEntityException;
+use Psr\Log\LoggerInterface;
 
 class CurrentCustomer
 {
-    protected $context = [];
+    protected $customerId = null;
 
+    /**
+     * @var CustomerRepositoryInterface
+     */
     protected $customerRepository;
+    /**
+     * @var GroupRepositoryInterface
+     */
     protected $groupRepository;
+    /**
+     * @var LoggerInterface
+     */
+    protected $logger;
 
+    /**
+     * @param CustomerRepositoryInterface $customerRepository
+     * @param GroupRepositoryInterface $groupRepository
+     * @param LoggerInterface $logger
+     */
     public function __construct(
         CustomerRepositoryInterface $customerRepository,
-        GroupRepositoryInterface $groupRepository
+        GroupRepositoryInterface $groupRepository,
+        LoggerInterface $logger
     ) {
         $this->customerRepository = $customerRepository;
         $this->groupRepository = $groupRepository;
+        $this->logger = $logger;
     }
 
-    public function isUserLoggedIn(): bool
+    /**
+     * Set customer ID for the current operation to avoid passing it as a parameter
+     *
+     * @param $customerId
+     * @return void
+     */
+    public function setCustomerId($customerId): void
     {
-        $customerId = $this->getCustomerId($this->context);
+        $this->customerId = $customerId;
+    }
 
-        if (!$customerId) {
-            return false;
+    /**
+     * Check if customer is authorized
+     *
+     * @return bool
+     */
+    public function isCustomerLoggedIn(): bool
+    {
+        return (bool)$this->customerId;
+    }
+
+    /**
+     * Get customer by id
+     *
+     * @return CustomerInterface|null
+     * @throws LocalizedException
+     */
+    public function getCustomer(): ?CustomerInterface
+    {
+        try {
+            return $this->customerRepository->getById($this->customerId);
+        } catch (NoSuchEntityException $e) {
+            $this->logger->error($e->getMessage());
+            return null;
         }
-        return true;
     }
 
-    public function getCustomerId($context) // вызвать в ресолвере !первым
+    /**
+     * Get customer group code (name)
+     *
+     * @return string
+     */
+    public function getCustomerGroupName(): string
     {
-        if (!$this->context) {
-            $this->context = $context;
+        try {
+            return $this->groupRepository->getById($this->getCustomer()->getGroupId())->getCode();
+        } catch (LocalizedException $e) {
+            $this->logger->error($e->getMessage());
+            return '';
         }
-        return $context->getUserId();
     }
 
-    public function getCustomer(): CustomerInterface //try catch
+    /**
+     * Get current customer ID (used externally)
+     *
+     * @return int
+     */
+    public function getCustomerId(): int
     {
-        $customerId = $this->getCustomerId($this->context);
-        return $this->customerRepository->getById($customerId);
-    }
-
-
-    public function getCustomerGroupName(): string //try catch
-    {
-        return $this->groupRepository->getById($this->getCustomer()->getGroupId())->getCode();
+        return $this->customerId;
     }
 }
