@@ -3,20 +3,27 @@
 namespace Perspective\PopularProductList\ViewModel;
 
 use Magento\Framework\View\Element\Block\ArgumentInterface;
-use Perspective\PopularProductList\Service\PopularProducts;
+use Perspective\PopularProductList\Service\PopularProductsManagement;
+use Magento\Framework\DataObject\IdentityInterface;
 
-class PopularProductList implements ArgumentInterface
+
+class PopularProductList implements ArgumentInterface, IdentityInterface
 {
-    protected $popularProductsService;
+    protected $popularProductsManager;
     public function __construct(
-        PopularProducts $popularProductsService,
+        PopularProductsManagement $popularProductsManager,
     ) {
-        $this->popularProductsService = $popularProductsService;
+        $this->popularProductsManager = $popularProductsManager;
     }
 
     public function test()
     {
-        return $this->popularProductsService->getTopProductStats();
+        return $this->popularProductsManager->getTopProducts();
+    }
+
+    public function getIdentities()
+    {
+        return ['perspective_product_top_list'];
     }
 
 }

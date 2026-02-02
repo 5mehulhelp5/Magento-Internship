@@ -14,6 +14,6 @@ class PopularProduct extends AbstractDb
      */
     public function _construct(): void
     {
-        $this->_init('perspective_popular_products', 'product_id');
+        $this->_init('perspective_popular_products', 'rank');
     }
 }

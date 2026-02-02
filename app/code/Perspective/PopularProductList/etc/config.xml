@@ -5,7 +5,7 @@
         <perspective_popular_products>
             <general_settings>
                 <enabled>0</enabled>
-                <update_frequency>6</update_frequency>
+                <update_frequency>0 */6 * * *</update_frequency>
                 <display_count>5</display_count>
             </general_settings>
         </perspective_popular_products>

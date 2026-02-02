@@ -19,9 +19,9 @@
                 </field>
 
                 <field id="update_frequency" sortOrder="2" translate="label" type="text" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Update Frequency (hours)</label>
-                    <validate>validate-digits validate-not-negative-number validate-digits-range</validate>
-                    <comment>Time period between list refreshes. Must be greater than 0.</comment>
+                    <label>Update Frequency (cron time)</label>
+                    <validate>required-entry validate-cron</validate>
+                    <comment><![CDATA[Format: <code>minute hour day month day_of_week</code>. Example: <code>0 */6 * * *</code> (every 6 hours).]]></comment>
                     <depends><field id="enabled">1</field></depends>
                 </field>
 

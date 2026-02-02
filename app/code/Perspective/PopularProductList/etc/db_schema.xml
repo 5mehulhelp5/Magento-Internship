@@ -2,43 +2,34 @@
 <schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
 
-    <table name="perspective_popular_products"
-           resource="default"
-           engine="innodb"
-           comment="Popular Products Table">
+    <table name="perspective_popular_products" resource="default" engine="innodb">
+
+        <column xsi:type="smallint"
+                name="rank"
+                unsigned="true"
+                nullable="false"
+                comment="Rank Position"/>
 
         <column xsi:type="int"
                 name="product_id"
                 unsigned="true"
                 nullable="false"
-                comment="Entity ID of Product"/>
+                comment="Product ID"/>
 
         <column xsi:type="int"
-                name="purchased_qty"
-                scale="4"
-                precision="12"
+                name="orders_count"
                 unsigned="true"
                 nullable="false"
                 default="0"
-                comment="Total Purchased Quantity"/>
+                comment="Orders with product"/>
 
         <column xsi:type="timestamp"
                 name="updated_at"
                 on_update="true"
-                nullable="false"
-                default="CURRENT_TIMESTAMP"
-                comment="Last Update Time"/>
+                default="CURRENT_TIMESTAMP"/>
 
         <constraint xsi:type="primary" referenceId="PRIMARY">
-            <column name="product_id"/>
+            <column name="rank"/>
         </constraint>
-
-        <constraint xsi:type="foreign"
-                    referenceId="FK_POPULAR_PRODUCT_ID"
-                    table="perspective_popular_products"
-                    column="product_id"
-                    referenceTable="catalog_product_entity"
-                    referenceColumn="entity_id"
-                    onDelete="CASCADE"/>
     </table>
 </schema>
