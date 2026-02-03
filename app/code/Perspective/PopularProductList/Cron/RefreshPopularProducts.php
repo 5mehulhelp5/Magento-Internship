@@ -3,51 +3,80 @@ namespace Perspective\PopularProductList\Cron;
 
 use Psr\Log\LoggerInterface;
 use Perspective\PopularProductList\Service\PopularProductsManagement;
-use Magento\Framework\App\CacheInterface;
 use Magento\Framework\App\Cache\Frontend\Pool;
-use Magento\PageCache\Model\Cache\Type;
-use Magento\Framework\App\Cache\TypeListInterface;
-
+use Throwable;
+use Zend_Cache;
+use Perspective\PopularProductList\Service\ConfigData;
 
 class RefreshPopularProducts
 {
+    /**
+     * @var LoggerInterface
+     */
     protected $logger;
+    /**
+     * @var PopularProductsManagement
+     */
     protected $popularProductsManager;
-    protected $cacheManager;
-    protected $cachePool;
-    protected $cacheTypeList;
+    /**
+     * @var Pool
+     */
+    protected $frontendCachePool;
+    /**
+     * @var ConfigData
+     */
+    protected $configDataService;
 
+    /**
+     * @param LoggerInterface $logger
+     * @param PopularProductsManagement $popularProductsManager
+     * @param Pool $frontendCachePool
+     * @param ConfigData $configDataService
+     */
     public function __construct(
         LoggerInterface $logger,
         PopularProductsManagement $popularProductsManager,
-        CacheInterface $cacheManager,
-        Pool $cachePool,
-        TypeListInterface $cacheTypeList,
+        Pool $frontendCachePool,
+        ConfigData $configDataService,
     ) {
         $this->logger = $logger;
         $this->popularProductsManager = $popularProductsManager;
-        $this->cacheManager = $cacheManager;
-        $this->cachePool = $cachePool;
-        $this->cacheTypeList = $cacheTypeList;
+        $this->frontendCachePool = $frontendCachePool;
+        $this->configDataService = $configDataService;
     }
 
-
     /**
-     * Cronjob Description
+     * Update popular products and clean cache for pages where they are shown
      *
      * @return void
      */
-    public function execute(): void //проблема с кешем
+    public function execute(): void
     {
-        $this->popularProductsManager->refreshTopProducts();
-        $this->logger->critical('Refresh popular products');
+        // skip cron if module disabled
+        if (!$this->configDataService->isModuleEnabled()) {
+            return;
+        }
 
-        $fpcCache = $this->cachePool->get(Type::TYPE_IDENTIFIER);
-        $fpcCache->clean(
-            \Zend_Cache::CLEANING_MODE_ALL,
-            ['PERSPECTIVE_PRODUCT_TOP_LIST']
-        );
-        $this->cacheTypeList->invalidate('PERSPECTIVE_PRODUCT_TOP_LIST');
-        $this->cacheManager->remove('PERSPECTIVE_PRODUCT_TOP_LIST');
+        // update top
+        try {
+            $this->popularProductsManager->refreshTopProducts();
+            $this->logger->notice(__('Popular products top successfully updated.'));
+        } catch (Throwable $e) {
+            $this->logger->error(__('Error refreshing popular products: %1', $e->getMessage()));
+            return;
+        }
+
+        // clean FPC on pages with popular products top
+        foreach ($this->frontendCachePool as $frontendCache) {
+            try {
+                $frontendCache->clean(
+                    Zend_Cache::CLEANING_MODE_MATCHING_TAG,
+                    ['PERSPECTIVE_PRODUCT_TOP_LIST']
+                );
+            } catch (Throwable $e) {
+                $this->logger->error(__('Error cleaning FPC: %1', $e->getMessage()));
+            }
+        }
+        $this->logger->notice(__('FPC cleaned on pages with popular-product-slider'));
     }
 }

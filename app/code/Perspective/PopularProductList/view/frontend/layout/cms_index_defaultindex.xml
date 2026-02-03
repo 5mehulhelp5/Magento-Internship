@@ -3,10 +3,9 @@
     <update handle="hyva_product_slider" />
     <body>
         <referenceContainer name="content">
-            <block name="perspective_testik_testik" template="Perspective_PopularProductList::test.phtml" ttl="60">
+            <block name="perspective_testik_testik" template="Perspective_PopularProductList::popular-product-slider.phtml">
                 <arguments>
                     <argument name="title" xsi:type="string" translate="true">Top Ordered Products</argument>
-                    <argument name="page_size" xsi:type="number">8</argument> <!-- заменить на значение конфига в шаблоне-->
                     <argument name="hide_details" xsi:type="boolean">true</argument>
                     <argument name="show_heading" xsi:type="boolean">true</argument>
                 </arguments>

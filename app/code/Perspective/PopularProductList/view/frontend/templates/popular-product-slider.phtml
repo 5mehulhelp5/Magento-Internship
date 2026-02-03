@@ -4,7 +4,6 @@
  * Copyright © Hyvä Themes. All rights reserved.
  * See COPYING.txt for license details.
  */
-
 declare(strict_types=1);
 
 use Hyva\Theme\Model\ViewModelRegistry;
@@ -21,11 +20,15 @@ use Perspective\PopularProductList\ViewModel\PopularProductList;
 /** @var Escaper $escaper */
 /** @var ViewModelRegistry $viewModels */
 
+/** @var PopularProductList $popularProductListViewModel */
+$popularProductListViewModel = $viewModels->require(PopularProductList::class);
+$items = $popularProductListViewModel->getItems();
+if (!$items) {
+    return '';
+}
+
 /** @var LucideIcons $lucideIcons */
 $lucideIcons = $viewModels->require(LucideIcons::class);
-
-/** @var LucideIcons $popularProductListViewModel */
-$popularProductListViewModel = $viewModels->require(PopularProductList::class);
 
 /** @var ProductList $productListViewModel */
 $productListViewModel = $viewModels->require(ProductList::class);
@@ -57,7 +60,7 @@ $hideDetails = $block->getHideDetails() ?? false;
 $hideRatingSummary = $block->getHideRatingSummary() ?? false;
 
 // Filter Options
-$pageSize = $block->getPageSize() ?: 8;
+$pageSize = null;
 $sortDirection = $block->getSortDirection() ?: 'ASC';
 
 $type = $block->getType();
@@ -75,11 +78,6 @@ if ($isAnchorCategory = $block->getIncludeChildCategoryProducts()) {
 
 $productListViewModel->setPageSize($pageSize);
 $productListViewModel->addFilter('website_id', $storeViewModel->getWebsiteId());
-
-$items = $popularProductListViewModel->test();
-if (!$items) {
-    return '';
-}
 
 $itemRenderer = $block->getLayout()->getBlock('product_list_item')
     ?: $block->getChildBlock('slider.item.template')

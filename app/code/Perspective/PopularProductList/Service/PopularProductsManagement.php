@@ -2,21 +2,20 @@
 
 namespace Perspective\PopularProductList\Service;
 
-use Magento\Catalog\Model\ResourceModel\Product\Collection;
 use Perspective\PopularProductList\Service\PopularProductsCollector;
 use Perspective\PopularProductList\Model\PopularProductFactory;
 use Perspective\PopularProductList\Model\ResourceModel\PopularProduct as ResourceModel;
 use Perspective\PopularProductList\Model\ResourceModel\PopularProduct\CollectionFactory as PopularCollectionFactory;
 use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory as ProductCollectionFactory;
+use Throwable;
 use Zend_Db_Expr;
 use Perspective\PopularProductList\Service\ConfigData;
-
-
+use Psr\Log\LoggerInterface;
 
 class PopularProductsManagement
 {
     /**
-     * @var \Perspective\PopularProductList\Service\PopularProductsCollector
+     * @var PopularProductsCollector
      */
     protected $popularProductsCollector;
     /**
@@ -36,17 +35,23 @@ class PopularProductsManagement
      */
     protected $productCollectionFactory;
     /**
-     * @var \Perspective\PopularProductList\Service\ConfigData
+     * @var ConfigData
      */
     protected $configDataService;
 
     /**
-     * @param \Perspective\PopularProductList\Service\PopularProductsCollector $popularProductsCollector
+     * @var LoggerInterface
+     */
+    protected $logger;
+
+    /**
+     * @param PopularProductsCollector $popularProductsCollector
      * @param PopularProductFactory $popularProductFactory
      * @param ResourceModel $resourceModel
      * @param PopularCollectionFactory $popularCollectionFactory
      * @param ProductCollectionFactory $productCollectionFactory
-     * @param \Perspective\PopularProductList\Service\ConfigData $configDataService
+     * @param ConfigData $configDataService
+     * @param LoggerInterface $logger
      */
     public function __construct(
         PopularProductsCollector $popularProductsCollector,
@@ -54,7 +59,8 @@ class PopularProductsManagement
         ResourceModel $resourceModel,
         PopularCollectionFactory $popularCollectionFactory,
         ProductCollectionFactory $productCollectionFactory,
-        ConfigData $configDataService
+        ConfigData $configDataService,
+        LoggerInterface $logger
     ) {
         $this->popularProductsCollector = $popularProductsCollector;
         $this->popularProductFactory = $popularProductFactory;
@@ -62,10 +68,11 @@ class PopularProductsManagement
         $this->popularCollectionFactory = $popularCollectionFactory;
         $this->productCollectionFactory = $productCollectionFactory;
         $this->configDataService = $configDataService;
+        $this->logger = $logger;
     }
 
     /**
-     * Update popular products ranks
+     * Update popular product ranks
      *
      * @return void
      */
@@ -74,15 +81,22 @@ class PopularProductsManagement
         $topProducts = $this->popularProductsCollector->getTopProductStats();
         $rank = 1;
         foreach ($topProducts as $productId => $count) {
-            $model = $this->popularProductFactory->create();
+            try {
+                $model = $this->popularProductFactory->create();
 
-            $this->resourceModel->load($model, $rank);
+                $this->resourceModel->load($model, $rank);
 
-            $model->setData('rank', $rank);
-            $model->setData('product_id', $productId);
-            $model->setData('orders_count', $count);
+                $model->setData('rank', $rank);
+                $model->setData('product_id', $productId);
+                $model->setData('orders_count', $count);
 
-            $this->resourceModel->save($model); //exc
+                $this->resourceModel->save($model);
+            } catch (Throwable $e) {
+                $this->logger->error(__('Failed saving popular product (ID: %1, rank: %2): %3',
+                    $productId,
+                    $rank,
+                    $e->getMessage()));
+            }
             $rank++;
         }
         $this->deleteInvalidRanks();
@@ -109,6 +123,7 @@ class PopularProductsManagement
             $productCollection->getSelect()->order(new Zend_Db_Expr('FIELD(entity_id,' . implode(',', $productIds).')'));
         }
 
+        // popular products array
         return $productCollection->getItems();
     }
 
@@ -121,11 +136,19 @@ class PopularProductsManagement
     public function deleteInvalidRanks(): void
     {
         $limit = $this->configDataService->getDisplayCount();
+
         $collection = $this->popularCollectionFactory->create();
         $collection->addFieldToFilter('rank', ['gt' => $limit]);
 
         foreach ($collection as $record) {
-            $record->delete();
+            try {
+                $record->delete();
+            } catch (Throwable $e) {
+                $this->logger->error(__('Failed deleting popular product (ID: %1, rank: %2): %3',
+                    $record->getProductId(),
+                    $record->getRank(),
+                    $e->getMessage()));
+            }
         }
     }
 }

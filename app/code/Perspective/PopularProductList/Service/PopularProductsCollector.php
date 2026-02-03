@@ -3,11 +3,9 @@ namespace Perspective\PopularProductList\Service;
 
 use Magento\Sales\Model\ResourceModel\Order\CollectionFactory as OrderCollectionFactory;
 use Magento\Sales\Model\ResourceModel\Order\Item\CollectionFactory as OrderItemCollectionFactory;
-use Perspective\PopularProductList\Model\PopularProduct;
 use Perspective\PopularProductList\Service\ConfigData;
 use Perspective\PopularProductList\Model\PopularProductFactory;
 use Perspective\PopularProductList\Model\ResourceModel\PopularProduct as ResourceModel;
-
 
 class PopularProductsCollector
 {
@@ -20,7 +18,7 @@ class PopularProductsCollector
      */
     protected $orderItemCollectionFactory;
     /**
-     * @var \Perspective\PopularProductList\Service\ConfigData
+     * @var ConfigData
      */
     protected $configDataService;
     /**
@@ -35,7 +33,7 @@ class PopularProductsCollector
     /**
      * @param OrderCollectionFactory $orderCollectionFactory
      * @param OrderItemCollectionFactory $orderItemCollectionFactory
-     * @param \Perspective\PopularProductList\Service\ConfigData $configDataService
+     * @param ConfigData $configDataService
      * @param PopularProductFactory $popularProductFactory
      * @param ResourceModel $resourceModel
      */
@@ -54,7 +52,7 @@ class PopularProductsCollector
     }
 
     /**
-     * Get a list of product ids and how many times they were ordered
+     * Get a sorted list of product ids and how many times they were ordered
      *
      * @return array [product_id => count]
      */
@@ -73,7 +71,7 @@ class PopularProductsCollector
             ->addFieldToFilter('parent_item_id', ['null' => true]); // for products with parent(configurable)
         $productIds = $itemCollection->getColumnValues('product_id');
 
-        // count how many times each product ID appears in the list
+        // count how many times each product ID appears in the list (sort by count)
         return array_count_values($productIds);
     }
 
